@@ -1,0 +1,41 @@
+
+export interface Equipo {
+  id: number,
+  nombreJugador1: string,
+  nombreJugador2: string,
+  puntos?: number | null,
+}
+
+export interface PartidoActual {
+  equipo1: Equipo,
+  equipo2: Equipo,
+  equipo1Game: number | null,
+  equipo2Game: number | null,
+  equipo1Set1: number | null,
+  equipo1Set2: number | null,
+  equipo1Set3: number | null,
+  equipo2Set1: number | null,
+  equipo2Set2: number | null,
+  equipo2Set3: number | null,
+  setActual: number | null,
+  tipoSet: 'set' | 'tie-break' | null,
+  sacaEquipo1: boolean | null,
+  tipoGame: 'game' | 'tie-break' | null,
+}
+
+export interface PartidoActualPayload {
+  idEquipo1?: number,
+  idEquipo2?: number,
+  equipo1Game?: number | null,
+  equipo2Game?: number | null,
+  equipo1Set1?: number | null,
+  equipo1Set2?: number | null,
+  equipo1Set3?: number | null,
+  equipo2Set1?: number | null,
+  equipo2Set2?: number | null,
+  equipo2Set3?: number | null,
+  setActual?: number | null,
+  tipoSet?: 'set' | 'tie-break' | null,
+  sacaEquipo1?: boolean | null,
+  tipoGame?: 'game' | 'tie-break' | null,
+}
