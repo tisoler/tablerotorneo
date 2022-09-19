@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import ConEncabezado from '../hoc/ConEncabezado'
 import { ObtenerPartidoActual } from '../Servicios/PartidoActual'
 import { PartidoActual } from '../Tipos'
 import Pelota from '../recursos/pelota'
@@ -39,7 +38,7 @@ const Partido = () => {
   const [mostrarGame, setMostrarGame] = useState<boolean>(false)
 
   useEffect(() => {
-    setInterval(async () => {
+    const obtenerPartidoActual = async () => {
       const partidoActualDB = await ObtenerPartidoActual()
       if (partidoActualDB) {
         setPartidoActual({
@@ -62,7 +61,9 @@ const Partido = () => {
         setMostrarSet3(!!partidoActualDB?.setActual && partidoActualDB.setActual >= 3)
         setMostrarGame(!partidoActualDB?.tipoSet || partidoActualDB.tipoSet === 'set')
       }
-    }, 1500)
+    }
+    setInterval(obtenerPartidoActual, 1500) // Refresco de datos
+    obtenerPartidoActual() // Carga inicial
   }, [])
 
   return (
@@ -129,7 +130,7 @@ const Tablero = styled.div`
   }
 
   @media (max-width: 600px) {
-    margin: 25px 0;
+    margin: 40px 0;
   }
 `
 
@@ -258,4 +259,4 @@ const Game = styled.div`
   }
 `
 
-export default ConEncabezado(Partido)
+export default Partido

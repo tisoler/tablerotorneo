@@ -1,4 +1,4 @@
-import { PartidoActual } from "../Tipos"
+import { PartidoActual, PartidoActualPayload } from "../Tipos"
 
 const { REACT_APP_BACKEND_URL } = process.env
 
@@ -14,7 +14,7 @@ export const ObtenerPartidoActual = async (): Promise<PartidoActual | null> => {
   }
 }
 
-export const ActualizarPartidoActual = async (payload: any): Promise<PartidoActual | null> => {
+export const ActualizarPartidoActual = async (payload: PartidoActualPayload): Promise<PartidoActual | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
