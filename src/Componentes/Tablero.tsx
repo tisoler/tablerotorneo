@@ -20,8 +20,10 @@ const Tablero = () => {
         setConfiguracion(configuracion)
       }
     }
-    setInterval(obtenerConfiguracion, 2000) // Refresco de datos
+    const intervalo = setInterval(obtenerConfiguracion, 2000) // Refresco de datos
     obtenerConfiguracion() // Carga inicial
+
+    return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
 
   const renderPantalla = () => {

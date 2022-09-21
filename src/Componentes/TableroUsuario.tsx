@@ -36,11 +36,12 @@ const Contenedor = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100%;
+  height: calc(90% - 30px);
   margin-top: 30px;
 
   @media (max-width: 768px) {
     margin-top: 55px;
+    height: calc(88% - 30px);
   }
 
   @media (max-width: 600px) {

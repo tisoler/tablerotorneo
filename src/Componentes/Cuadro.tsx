@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 import { ObtenerCuadroFinal } from '../Servicios/CuadroFinal'
 import { CuadroFinal } from '../Tipos'
@@ -33,8 +33,10 @@ const Cuadro = () => {
         setCuadroFinal(cuadroFinalDB)
       }
     }
-    setInterval(obtenerCuadroFinal, 60000) // Refresco de datos
+    const intervalo = setInterval(obtenerCuadroFinal, 60000) // Refresco de datos
     obtenerCuadroFinal() // Carga inicial
+
+    return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
 
   return (

@@ -62,8 +62,10 @@ const Partido = () => {
         setMostrarGame(!partidoActualDB?.tipoSet || partidoActualDB.tipoSet === 'set')
       }
     }
-    setInterval(obtenerPartidoActual, 1500) // Refresco de datos
+    const intervalo = setInterval(obtenerPartidoActual, 1500) // Refresco de datos
     obtenerPartidoActual() // Carga inicial
+
+    return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
 
   return (

@@ -21,8 +21,10 @@ const Grupos = () => {
         setGrupos(gruposDB)
       }
     }
-    setInterval(obtenerGrupos, 60000) // Refresco de datos
+    const intervalo = setInterval(obtenerGrupos, 60000) // Refresco de datos
     obtenerGrupos() // Carga inicial
+
+    return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
 
   return (

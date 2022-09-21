@@ -1,10 +1,10 @@
 
 import styled from 'styled-components'
 
-export default () => {
+const Encabezado = () => {
   
   return (
-    <Encabezado>
+    <EncabezadoDiv>
       <Titulo>
         <Iniciales>
           APMP
@@ -17,18 +17,20 @@ export default () => {
       <Subtitulo>
         Copa Que Placer Que Vino
       </Subtitulo>
-    </Encabezado>
+    </EncabezadoDiv>
   )
 }
 
-const Encabezado = styled.div`
+const EncabezadoDiv = styled.div`
   display: flex;
   width: 100%;
   background-color: #fff;
   max-height: 100px;
+  height: 9%;
 
   @media (max-width: 768px) {
     flex-direction: column;
+    height: 11%;
   }
 `
 
@@ -76,6 +78,7 @@ const Nombre = styled.div`
   font-family: Verdana;
   padding: 10px;
   font-weight: bold;
+  background-color: #fff;
 
   @media (max-width: 768px) {
     font-size: 25px;
@@ -94,6 +97,7 @@ const Escudo = styled.div`
   background-repeat: no-repeat;
   background-position: center;
   background-size: 65%;
+  background-color: #fff;
 `
 
 const Subtitulo = styled.div`
@@ -120,3 +124,5 @@ const Subtitulo = styled.div`
     margin: 0;
   }
 `
+
+export default Encabezado
