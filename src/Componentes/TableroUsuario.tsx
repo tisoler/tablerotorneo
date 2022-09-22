@@ -40,12 +40,12 @@ const Contenedor = styled.div`
   margin-top: 30px;
 
   @media (max-width: 768px) {
-    margin-top: 55px;
-    height: calc(88% - 30px);
+    margin-top: 65px;
+    height: calc(83% - 30px);
   }
 
   @media (max-width: 600px) {
-    margin-top: 30px;
+    margin-top: 40px;
   }
 `
 
