@@ -1,12 +1,21 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Grupos from "./Grupos"
 import Partido from "./Partido"
 import Cuadro from './Cuadro'
 import styled from 'styled-components'
 import ConEncabezado from '../hoc/ConEncabezado'
+import { ObtenerConfiguracion } from "../Servicios/Configuracion"
 
 const TableroUsuario = () => {
-  const [vista, setVista] = useState('grupos')
+  const [vista, setVista] = useState<'grupo' | 'partido' | 'cuadro'>()
+
+  useEffect(() => {
+    const obtenerConfiguracion = async () => {
+      const configuracionInicial = await ObtenerConfiguracion()
+      setVista(configuracionInicial?.pantallaMostrar ?? 'grupo')
+    }
+    obtenerConfiguracion()
+  }, [])
 
   const renderPantalla = () => {
     switch(vista) {
@@ -23,10 +32,10 @@ const TableroUsuario = () => {
     <Contenedor>
       <Menu>
         <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
-        <BotonMenu seleccionado={vista === 'grupos'}  onClick={() => setVista('grupos')}>Grupos</BotonMenu>
+        <BotonMenu seleccionado={vista === 'grupo'}  onClick={() => setVista('grupo')}>Grupos</BotonMenu>
         <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro final</BotonMenuDerecha>
       </Menu>
-      { renderPantalla() }
+      { vista && renderPantalla() }
     </Contenedor>
   )
 }

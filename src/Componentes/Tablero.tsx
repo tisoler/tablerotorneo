@@ -7,17 +7,17 @@ import Cuadro from './Cuadro'
 import ConEncabezado from '../hoc/ConEncabezado'
 
 const CONFIGURACION_INICIAL: Configuracion = {
-  pantallaMostrar: 'grupos',
+  pantallaMostrar: 'grupo',
 }
 
 const Tablero = () => {
-  const [configuracion, setConfiguracion] = useState(CONFIGURACION_INICIAL)
+  const [configuracion, setConfiguracion] = useState<Configuracion>()
 
   useEffect(() => {
     const obtenerConfiguracion = async () => {
       const configuracion = await ObtenerConfiguracion()
       if (configuracion) {
-        setConfiguracion(configuracion)
+        setConfiguracion(configuracion || CONFIGURACION_INICIAL)
       }
     }
     const intervalo = setInterval(obtenerConfiguracion, 2000) // Refresco de datos

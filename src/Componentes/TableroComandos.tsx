@@ -226,7 +226,7 @@ const TableroComandos = () => {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <TableroPantallas>
         <ContenedorBotonesPantallas>
-          <Boton ancho={150} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'grupos' })}>Grupos</Boton>
+          <Boton ancho={150} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'grupo' })}>Grupos</Boton>
           <Boton ancho={200} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'partido' })}>Partido</Boton>
           <Boton ancho={200} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'cuadro' })}>Cuadro</Boton>
         </ContenedorBotonesPantallas>

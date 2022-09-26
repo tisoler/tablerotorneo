@@ -44,7 +44,7 @@ export interface PartidoActualPayload {
 }
 
 export interface Configuracion {
-  pantallaMostrar: string,
+  pantallaMostrar: 'grupo' | 'partido' | 'cuadro',
 }
 
 export interface CuadroFinal {
