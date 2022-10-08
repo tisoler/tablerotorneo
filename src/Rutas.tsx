@@ -1,19 +1,15 @@
 import { Route, Routes } from 'react-router-dom'
-import Tablero from './Componentes/Tablero'
-import TableroComandos from './Componentes/TableroComandos'
-import TableroUsuario from './Componentes/TableroUsuario'
-
-import PartidoFutbol from './Componentes/Partidos/PartidoFutbol'
-import PartidoHockey from './Componentes/Partidos/PartidoHockey'
+import Tablero from './Componentes/TenisPadel/Tablero'
+import TableroComandos from './Componentes/TenisPadel/TableroComandos'
+import Inicio from './Componentes/Comunes/Inicio'
 
 const Rutas = () => {
   return (
     <Routes>
-      <Route path={'/'} element={TableroUsuario} />
+      <Route path={'/'} element={Inicio} />
       <Route path={'/tablero'} element={Tablero} />
       <Route path={'/tableroComandos'} element={<TableroComandos />} />
-      <Route path={'/PartidoFutbol'} element={<PartidoFutbol />} />
-      <Route path={'/PartidoHockey'} element={<PartidoHockey />} />
+      <Route path={'/pantallaInicio'} element={Inicio} />
     </Routes>
   )
 }

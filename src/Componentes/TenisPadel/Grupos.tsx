@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { Equipo } from '../Tipos'
-import { ObtenerEquipos } from '../Servicios/Equipo'
+import { Equipo } from '../../Tipos'
+import { ObtenerEquipos } from '../../Servicios/Equipo'
 
 const Grupos = () => {
   const [equipos, setEquipos] = useState<Equipo[]>([])
@@ -27,6 +27,32 @@ const Grupos = () => {
     return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
 
+  const ordenarEquipos = (a: Equipo, b: Equipo) => {
+    let criterioA = a.posicion || 4
+    let criterioB = b.posicion || 4
+    if (criterioA !== criterioB) {
+      return criterioA > criterioB ? 1 : -1
+    }
+    criterioA = a.partidosGanados || 0
+    criterioB = b.partidosGanados || 0
+    if (criterioA !== criterioB) {
+      return criterioA < criterioB ? 1 : -1
+    }
+    criterioA = a.partidosJugados || 0
+    criterioB = b.partidosJugados || 0
+    if (criterioA !== criterioB) {
+      return criterioA > criterioB ? 1 : -1
+    }
+    criterioA = !!a.diferenciaSets && !isNaN(Number(a.diferenciaSets)) ? parseInt(a.diferenciaSets) : 0
+    criterioB = !!b.diferenciaSets && !isNaN(Number(b.diferenciaSets)) ? parseInt(b.diferenciaSets) : 0
+    if (criterioA !== criterioB) {
+      return criterioA < criterioB ? 1 : -1
+    }
+    criterioA = !!a.diferenciaGames && !isNaN(Number(a.diferenciaGames)) ? parseInt(a.diferenciaGames) : 0
+    criterioB = !!b.diferenciaGames && !isNaN(Number(b.diferenciaGames)) ? parseInt(b.diferenciaGames) : 0
+    return criterioA <= criterioB ? 1 : -1
+  }
+
   return (
     <Tablero>
       {grupos.map((grupo: string) =>
@@ -35,13 +61,15 @@ const Grupos = () => {
             <NumeroGrupo>{`Grupo ${grupo}`}</NumeroGrupo>
             <PosicionPartidosEnc>PJ</PosicionPartidosEnc>
             <PosicionPartidosEnc>PG</PosicionPartidosEnc>
+            <PosicionPartidosEnc>DS</PosicionPartidosEnc>
+            <PosicionPartidosEnc>DG</PosicionPartidosEnc>
           </Encabezado>
           { equipos
             .filter((equipo: Equipo) => equipo.idGrupo === grupo)
-            .sort((a: Equipo, b: Equipo) => (a.posicion || 4) - (b.posicion || 4))
+            .sort(ordenarEquipos)
             .map((equipo: Equipo) => (
               <EquipoConEstilo key={equipo.id}>
-                <PosicionPartidos>
+                <PosicionPartidos ancho={7}>
                   {`${equipo.posicion || 4}`}
                 </PosicionPartidos>
                 <Jugadores>
@@ -53,6 +81,12 @@ const Grupos = () => {
                 </PosicionPartidos>
                 <PosicionPartidos>
                   {`${equipo.partidosGanados || 0}`}
+                </PosicionPartidos>
+                <PosicionPartidos>
+                  {`${equipo.diferenciaSets || 0}`}
+                </PosicionPartidos>
+                <PosicionPartidos>
+                  {`${equipo.diferenciaGames || 0}`}
                 </PosicionPartidos>
               </EquipoConEstilo>
             ))
@@ -108,9 +142,9 @@ const NumeroGrupo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 76%;
+  width: 56%;
   height: 70px;
-  font-size: 40px;
+  font-size: 30px;
   color: #fff;
 
   @media (max-width: 768px) {
@@ -122,14 +156,14 @@ const NumeroGrupo = styled.div`
   }
 `
 
-const PosicionPartidosEnc = styled.div`
+const PosicionPartidosEnc = styled.div<{ ancho?: number }>`
   display: flex;
-  flex-direction: center;
   justify-content: center;
   align-items: center;
-  width: 12%;
+  text-align: center;
+  width: ${props => props.ancho ?? 11}%;
   color: #fff;
-  font-size: 30px;
+  font-size: 22px;
 
   @media (max-width: 768px) {
     font-size: 25px;
@@ -140,20 +174,19 @@ const PosicionPartidosEnc = styled.div`
   }
 `
 
-const PosicionPartidos = styled.div`
+const PosicionPartidos = styled.div<{ ancho?: number }>`
   display: flex;
-  flex-direction: center;
   justify-content: center;
   align-items: center;
-  width: 12%;
-  font-size: 30px;
+  width: ${props => props.ancho ?? 11}%;
+  font-size: 23px;
 
   @media (max-width: 768px) {
-    font-size: 25px;
+    font-size: 20px;
   }
 
   @media (max-width: 600px) {
-    font-size: 20px;
+    font-size: 17px;
   }
 `
 
@@ -183,13 +216,13 @@ const Jugadores = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 64%;
-  padding: 10px 10px;
+  width: calc(49% - 15px);
+  padding: 10px 5px 10px 10px;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 16px;
 
   @media (max-width: 768px) {
-    font-size: 17px;
+    font-size: 20px;
   }
 
   @media (max-width: 600px) {

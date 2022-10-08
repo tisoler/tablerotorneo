@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import { ObtenerConfiguracion } from "../Servicios/Configuracion"
-import { Configuracion } from "../Tipos"
+import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
+import { Configuracion } from "../../Tipos"
 import Grupos from "./Grupos"
 import Partido from "./Partido"
 import Cuadro from './Cuadro'
-import ConEncabezado from '../hoc/ConEncabezado'
+import ConEncabezado from '../../hoc/ConEncabezado'
 
 const CONFIGURACION_INICIAL: Configuracion = {
   pantallaMostrar: 'grupo',
@@ -15,7 +15,7 @@ const Tablero = () => {
 
   useEffect(() => {
     const obtenerConfiguracion = async () => {
-      const configuracion = await ObtenerConfiguracion()
+      const configuracion = await ObtenerConfiguracion(1)
       if (configuracion) {
         setConfiguracion(configuracion || CONFIGURACION_INICIAL)
       }

@@ -1,3 +1,4 @@
+import { useContextoGlobal } from "../Contexto/contextoGlobal"
 import { PartidoActual, PartidoActualPayload } from "../Tipos"
 
 const { REACT_APP_BACKEND_URL } = process.env
@@ -14,14 +15,26 @@ export const ObtenerPartidoActual = async (): Promise<PartidoActual | null> => {
   }
 }
 
-export const ActualizarPartidoActual = async (payload: PartidoActualPayload): Promise<PartidoActual | null> => {
+export const ActualizarPartidoActual = async (
+  payload: PartidoActualPayload,
+  token: string,
+  limpiarToken: () => void,
+): Promise<PartidoActual | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': token || ''
+      },
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/partidoActual`, opcionesRequest)
+    if (res.status !== 200) {
+      limpiarToken()
+      console.log(await res.text())
+      return null
+    }
     const partidoActual = await res.json()
 
     return partidoActual
@@ -31,14 +44,26 @@ export const ActualizarPartidoActual = async (payload: PartidoActualPayload): Pr
   }
 }
 
-export const ActualizarGame = async (payload: { suma: boolean, esEquipo1: boolean }): Promise<PartidoActual | null> => {
+export const ActualizarGame = async (
+  payload: { suma: boolean, esEquipo1: boolean },
+  token: string,
+  limpiarToken: () => void,
+): Promise<PartidoActual | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': token || ''
+      },
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/partidoActual/game`, opcionesRequest)
+    if (res.status !== 200) {
+      limpiarToken()
+      console.log(await res.text())
+      return null
+    }
     const partidoActual = await res.json()
 
     return partidoActual

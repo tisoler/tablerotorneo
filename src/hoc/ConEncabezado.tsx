@@ -1,6 +1,6 @@
-import Encabezado from "../Componentes/Encabezado"
+import Encabezado from "../Componentes/Comunes/Encabezado"
 
-export default (Component: React.ElementType) => {
+const ConEncabezado = (Component: React.ElementType) => {
   return (
     <>
       <Encabezado />
@@ -8,3 +8,5 @@ export default (Component: React.ElementType) => {
     </>
   )
 }
+
+export default ConEncabezado

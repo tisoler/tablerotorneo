@@ -1,9 +1,9 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { ObtenerPartidoActual } from '../Servicios/PartidoActual'
-import { PartidoActual } from '../Tipos'
-import Pelota from '../recursos/pelota'
+import { ObtenerPartidoActual } from '../../Servicios/PartidoActual'
+import { PartidoActual } from '../../Tipos'
+import Pelota from '../../recursos/pelota'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
   equipo1: {

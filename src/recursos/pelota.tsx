@@ -1,7 +1,7 @@
 
 import styled from 'styled-components'
 
-export default () => {
+const Pelota = () => {
   return (
     <PelotaConEstilo width={45} height={45} viewBox="0 0 1000 1000" fill="#FFBD00" xmlns="http://www.w3.org/2000/svg">
       <g>
@@ -29,4 +29,6 @@ const PelotaConEstilo = styled.svg`
     height: 15px;
   }
 `
+
+export default Pelota
   

@@ -3,15 +3,21 @@ import Grupos from "./Grupos"
 import Partido from "./Partido"
 import Cuadro from './Cuadro'
 import styled from 'styled-components'
-import ConEncabezado from '../hoc/ConEncabezado'
-import { ObtenerConfiguracion } from "../Servicios/Configuracion"
+import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
+import BotonVolver from "../Comunes/BotonVolver"
+import { PantallaMostrar } from "../../Tipos"
 
-const TableroUsuario = () => {
-  const [vista, setVista] = useState<'grupo' | 'partido' | 'cuadro'>()
+interface TableroUsuarioProps {
+  idDisciplinaClub: number,
+  onVolver: () => void,
+}
+
+const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => {
+  const [vista, setVista] = useState<PantallaMostrar>()
 
   useEffect(() => {
     const obtenerConfiguracion = async () => {
-      const configuracionInicial = await ObtenerConfiguracion()
+      const configuracionInicial = await ObtenerConfiguracion(idDisciplinaClub)
       setVista(configuracionInicial?.pantallaMostrar ?? 'grupo')
     }
     obtenerConfiguracion()
@@ -30,11 +36,14 @@ const TableroUsuario = () => {
 
   return (
     <Contenedor>
-      <Menu>
-        <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
-        <BotonMenu seleccionado={vista === 'grupo'}  onClick={() => setVista('grupo')}>Grupos</BotonMenu>
-        <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro final</BotonMenuDerecha>
-      </Menu>
+      <EncabezadoPantalla>
+        <BotonVolver onVolver={onVolver} />
+        <Menu>
+          <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
+          <BotonMenu seleccionado={vista === 'grupo'}  onClick={() => setVista('grupo')}>Grupos</BotonMenu>
+          <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro final</BotonMenuDerecha>
+        </Menu>
+      </EncabezadoPantalla>
       { vista && renderPantalla() }
     </Contenedor>
   )
@@ -56,6 +65,13 @@ const Contenedor = styled.div`
   @media (max-width: 600px) {
     margin-top: 40px;
   }
+`
+
+const EncabezadoPantalla = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `
 
 const Menu = styled.div`
@@ -108,4 +124,4 @@ const BotonMenuDerecha = styled(BotonMenu)`
   border-bottom-right-radius: 25px;
 `
 
-export default ConEncabezado(TableroUsuario)
+export default TableroUsuario

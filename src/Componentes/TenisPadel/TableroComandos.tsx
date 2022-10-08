@@ -1,12 +1,13 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { Autenticar } from '../Servicios/Autenticar'
-import { ActualizarConfiguracion } from '../Servicios/Configuracion'
-import { ActualizarCuadroFinal, ObtenerCuadroFinal } from '../Servicios/CuadroFinal'
-import { ActualizarEquipo, ObtenerEquipos } from '../Servicios/Equipo'
-import { ActualizarGame, ActualizarPartidoActual, ObtenerPartidoActual } from '../Servicios/PartidoActual'
-import { CuadroFinal, CuadroFinalPayload, Equipo, PartidoActual, PartidoActualPayload } from '../Tipos'
+import { useContextoGlobal } from '../../Contexto/contextoGlobal'
+import { Autenticar } from '../../Servicios/Autenticar'
+import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
+import { ActualizarCuadroFinal, ObtenerCuadroFinal } from '../../Servicios/CuadroFinal'
+import { ActualizarEquipo, ObtenerEquipos } from '../../Servicios/Equipo'
+import { ActualizarGame, ActualizarPartidoActual, ObtenerPartidoActual } from '../../Servicios/PartidoActual'
+import { CuadroFinal, CuadroFinalPayload, Equipo, PantallaMostrar, PartidoActual, PartidoActualPayload, Usuario } from '../../Tipos'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
   equipo1: {
@@ -36,12 +37,13 @@ const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
 const TableroComandos = () => {
   const [partidoActual, setPartidoActual] = useState<PartidoActual>(PARTIDO_ACTUAL_INICIAL)
   const [equipos, setEquipos] = useState<Equipo[]>([])
-  const [autenticado, setAutenticado] = useState<boolean>(false)
   const [usuario, setUsuario] = useState<string>('')
   const [clave, setClave] = useState<string>('')
+  const [usuarioAutenticado, setUsuarioAutenticado] = useState<Usuario | null>(null)
   const [grupos, setGrupos] = useState<string[]>([])
   const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal>()
 
+  const { token, guardarToken, limpiarToken } = useContextoGlobal()
 
   useEffect(() => {
     const obtenerDatos = async () => {
@@ -93,22 +95,22 @@ const TableroComandos = () => {
   }, [])
 
   const actualizarGame = async (suma = true, esEquipo1 = true) => {
-    const partidoActualActualizado = await ActualizarGame({ suma, esEquipo1 })
+    const partidoActualActualizado = await ActualizarGame({ suma, esEquipo1 }, token, limpiarToken)
     if (partidoActualActualizado) setPartidoActual(partidoActualActualizado)
   }
 
   const actualizarPartido = async (payload: PartidoActualPayload) => {
-    const partidoActualActualizado = await ActualizarPartidoActual(payload)
+    const partidoActualActualizado = await ActualizarPartidoActual(payload, token, limpiarToken)
     if (partidoActualActualizado) setPartidoActual(partidoActualActualizado)
   }
 
   const autenticar = async () => {
-    const valido = await Autenticar({usuario, clave})
-    setAutenticado(valido)
+    const usuarioAut = await Autenticar({usuario, clave}, guardarToken, limpiarToken)
+    setUsuarioAutenticado(usuarioAut)
   }
 
   const actualizarCuadroFinal = async (payload: CuadroFinalPayload) => {
-    const cuadroFinalActualizado = await ActualizarCuadroFinal(payload)
+    const cuadroFinalActualizado = await ActualizarCuadroFinal(payload, token, limpiarToken)
     if (cuadroFinalActualizado) setCuadroFinal(cuadroFinalActualizado)
   }
 
@@ -212,7 +214,30 @@ const TableroComandos = () => {
     </EquipoCuadro>
   )
 
-  if (!autenticado) {
+  const cargarSetGame = async (evt: any, campo: 'diferenciaSets' | 'diferenciaGames', idEquipoFila: number) => {
+    const valor = evt?.target?.value
+    if (isNaN(Number(valor)) && valor !== '-') return
+
+    let equiposActualizados = null
+    if (valor === '-') {
+      equiposActualizados = equipos.map(eq => {
+        if (eq.id === idEquipoFila) {
+          eq[campo] = '-'
+        }
+        return eq
+      })
+    } else {
+      equiposActualizados = await ActualizarEquipo(idEquipoFila, { [campo]: parseInt(valor) }, token, limpiarToken)
+    }
+    if(equiposActualizados) setEquipos(equiposActualizados)
+  }
+
+  const actualizarConfiguracion = (pantalla: PantallaMostrar) => {
+    if (!usuarioAutenticado?.idDisciplinaClub) return
+    ActualizarConfiguracion(usuarioAutenticado.idDisciplinaClub, { pantallaMostrar: pantalla }, token, limpiarToken)
+  }
+
+  if (!token) {
     return (
       <Login>
         <div><Titulo>Usuario: </Titulo><SetInput value={usuario} onChange={(evt) => setUsuario(evt?.target?.value || '')}></SetInput></div>
@@ -226,9 +251,11 @@ const TableroComandos = () => {
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <TableroPantallas>
         <ContenedorBotonesPantallas>
-          <Boton ancho={150} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'grupo' })}>Grupos</Boton>
-          <Boton ancho={200} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'partido' })}>Partido</Boton>
-          <Boton ancho={200} onClick={() => ActualizarConfiguracion({ pantallaMostrar: 'cuadro' })}>Cuadro</Boton>
+          <Boton
+            ancho={150} 
+            onClick={() => actualizarConfiguracion('grupo')}>Grupos</Boton>
+          <Boton ancho={200} onClick={() => actualizarConfiguracion('partido')}>Partido</Boton>
+          <Boton ancho={200} onClick={() => actualizarConfiguracion('cuadro')}>Cuadro</Boton>
         </ContenedorBotonesPantallas>
       </TableroPantallas>
 
@@ -357,6 +384,8 @@ const TableroComandos = () => {
                 <PosicionPartidosEnc>Pos</PosicionPartidosEnc>
                 <PosicionPartidosEnc>PJ</PosicionPartidosEnc>
                 <PosicionPartidosEnc>PG</PosicionPartidosEnc>
+                <PosicionPartidosEnc>Dif sets</PosicionPartidosEnc>
+                <PosicionPartidosEnc>Dif games</PosicionPartidosEnc>
               </Encabezado>
               { equipos
                 .filter((equipo: Equipo) => equipo.idGrupo === grupo)
@@ -368,10 +397,11 @@ const TableroComandos = () => {
                     </Jugadores>
                     <PosicionPartidos>
                       <SetInput
+                        ancho={40}
                         value={equipo.posicion || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { posicion: parseInt(evt?.target?.value) })
+                          const equiposActualizados = await ActualizarEquipo(equipo.id, { posicion: parseInt(evt?.target?.value) }, token, limpiarToken)
                           if(equiposActualizados) setEquipos(equiposActualizados)
                         }}
                       >
@@ -379,10 +409,11 @@ const TableroComandos = () => {
                     </PosicionPartidos>
                     <PosicionPartidos>
                       <SetInput
+                        ancho={40}
                         value={equipo.partidosJugados || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) })
+                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) }, token, limpiarToken)
                           if(equiposActualizados) setEquipos(equiposActualizados)
                         }}
                       >
@@ -390,12 +421,29 @@ const TableroComandos = () => {
                     </PosicionPartidos>
                     <PosicionPartidos>
                       <SetInput
+                        ancho={40}
                         value={equipo.partidosGanados || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosGanados: parseInt(evt?.target?.value) })
+                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosGanados: parseInt(evt?.target?.value) }, token, limpiarToken)
                           if(equiposActualizados) setEquipos(equiposActualizados)
                         }}
+                      >
+                      </SetInput>
+                    </PosicionPartidos>
+                    <PosicionPartidos>
+                      <SetInput
+                        ancho={40}
+                        value={equipo.diferenciaSets || ''}
+                        onChange={async (evt) => cargarSetGame(evt, 'diferenciaSets', equipo.id)}
+                      >
+                      </SetInput>
+                    </PosicionPartidos>
+                    <PosicionPartidos>
+                      <SetInput
+                        ancho={40}
+                        value={equipo.diferenciaGames || ''}
+                        onChange={async (evt) => cargarSetGame(evt, 'diferenciaGames', equipo.id)}
                       >
                       </SetInput>
                     </PosicionPartidos>
@@ -534,8 +582,8 @@ const Set = styled.div`
   margin: 10px;
 `
 
-const SetInput = styled.input`
-  width: 50px;
+const SetInput = styled.input<{ ancho?: number }>`
+  width: ${props => props.ancho ?? 50}px;
   line-height: 30px;
   background-color: #fff;
   text-align: center;
@@ -614,28 +662,11 @@ const NumeroGrupo = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 55%;
+  text-align: center;
+  width: 35%;
   height: 70px;
-  font-size: 30px;
-  color: #fff;
-
-  @media (max-width: 768px) {
-    font-size: 30px;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 25px;
-  }
-`
-
-const PosicionPartidosEnc = styled.div`
-  display: flex;
-  flex-direction: center;
-  justify-content: center;
-  align-items: center;
-  width: 15%;
-  color: #fff;
   font-size: 25px;
+  color: #fff;
 
   @media (max-width: 768px) {
     font-size: 25px;
@@ -646,13 +677,29 @@ const PosicionPartidosEnc = styled.div`
   }
 `
 
+const PosicionPartidosEnc = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  width: 15%;
+  color: #fff;
+  font-size: 20px;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 15px;
+  }
+`
+
 const PosicionPartidos = styled.div`
   display: flex;
-  flex-direction: center;
   justify-content: center;
   align-items: center;
   width: 15%;
-  font-size: 30px;
 `
 
 const EquipoConEstilo = styled.div`
@@ -680,8 +727,8 @@ const Jugadores = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  width: 55%;
-  padding: 10px 10px;
+  width: calc(35% - 10px);
+  padding: 10px 5px;
   font-weight: bold;
 `
 

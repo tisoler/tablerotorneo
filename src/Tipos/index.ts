@@ -7,6 +7,8 @@ export interface Equipo {
   posicion?: number | null,
   partidosJugados?: number | null,
   partidosGanados?: number | null,
+  diferenciaSets?: string | null,
+  diferenciaGames?: string | null,
 }
 
 export interface PartidoActual {
@@ -43,8 +45,10 @@ export interface PartidoActualPayload {
   tipoGame?: 'game' | 'tie-break' | null,
 }
 
+export type PantallaMostrar = 'grupo' | 'partido' | 'cuadro'
+
 export interface Configuracion {
-  pantallaMostrar: 'grupo' | 'partido' | 'cuadro',
+  pantallaMostrar: PantallaMostrar,
 }
 
 export interface CuadroFinal {
@@ -81,4 +85,20 @@ export interface CuadroFinalPayload {
   finalEquipo1?: number,
   finalEquipo2?: number,
   campeon?: number,
+}
+
+export interface Usuario {
+  id: number,
+  usuario: string,
+  idDisciplinaClub: number,
+}
+
+export interface DisciplinaClub {
+  id: number,
+  idClub: number,
+  nombreClub: string,
+  idDisciplina: number;
+  nombreDisciplina: string,
+  idLocalidad: number,
+  nombreLocalidad: string,
 }

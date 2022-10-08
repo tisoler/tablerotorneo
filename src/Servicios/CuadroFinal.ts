@@ -14,14 +14,26 @@ export const ObtenerCuadroFinal = async (): Promise<CuadroFinal | null> => {
   }
 }
 
-export const ActualizarCuadroFinal = async (payload: CuadroFinalPayload): Promise<CuadroFinal | null> => {
+export const ActualizarCuadroFinal = async (
+  payload: CuadroFinalPayload,
+  token: string,
+  limpiarToken: () => void,
+): Promise<CuadroFinal | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': token || ''
+      },
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/cuadroFinal`, opcionesRequest)
+    if (res.status !== 200) {
+      limpiarToken()
+      console.log(await res.text())
+      return null
+    }
     const cuadroFinal = await res.json()
 
     return cuadroFinal

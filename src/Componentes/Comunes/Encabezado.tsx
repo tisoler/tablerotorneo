@@ -16,7 +16,7 @@ const Encabezado = () => {
       </Titulo>
       <Sponsor>
         <LogoSponsorMovil>
-          <img src={require('../recursos/logoQuePlacer.png')} alt='Logo Que placer que vino' />
+          <img src={require('../../recursos/logoQuePlacer.png')} alt='Logo Que placer que vino' />
         </LogoSponsorMovil>
         <Subtitulo>
           Copa Que Placer Que Vino

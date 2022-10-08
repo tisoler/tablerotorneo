@@ -1,7 +1,7 @@
 
 import styled from 'styled-components'
 
-export default () => {
+const Copa = () => {
   return (
     <CopaConEstilo width={55} height={55} viewBox="0 0 480.1 480.1" fill="#C0C0C0" xmlns="http://www.w3.org/2000/svg">
       <g>
@@ -36,3 +36,5 @@ const CopaConEstilo = styled.svg`
     height: 35px;
   }
 `
+
+export default Copa

@@ -14,14 +14,33 @@ export const ObtenerEquipos = async (): Promise<Equipo[] | null> => {
   }
 }
 
-export const ActualizarEquipo = async (idEquipo: number, payload: { posicion?: number, partidosJugados?: number, partidosGanados?: number }): Promise<Equipo[] | null> => {
+export const ActualizarEquipo = async (
+  idEquipo: number,
+  payload: {
+    posicion?: number,
+    partidosJugados?: number,
+    partidosGanados?: number,
+    diferenciaSets?: number,
+    diferenciaGames?: number
+  },
+  token: string,
+  limpiarToken: () => void,
+): Promise<Equipo[] | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': token || ''
+      },
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos/${idEquipo}`, opcionesRequest)
+    if (res.status !== 200) {
+      limpiarToken()
+      console.log(await res.text())
+      return null
+    }
     const equipos = await res.json()
 
     return equipos
