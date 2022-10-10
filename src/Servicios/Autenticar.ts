@@ -1,10 +1,9 @@
-import { Usuario } from "../Tipos"
 
 export const Autenticar = async (
   payload: { usuario: string, clave: string },
-  guardarToken: (token: string) => void,
-  limpiarToken: () => void,
-): Promise<Usuario | null> => {
+  guardarAutenticacion: (token: string, idDisciplina: number) => void,
+  limpiarAutenticacion: () => void,
+): Promise<boolean> => {
   try {
     const opcionesRequest = {
       method: 'POST',
@@ -13,17 +12,17 @@ export const Autenticar = async (
     }
     const res = await fetch(`${process.env.REACT_APP_BACKEND_URL}/autenticar`, opcionesRequest)
     if (res.status === 400) {
-      limpiarToken()
+      limpiarAutenticacion()
       console.log(await res.text())
-      return null
+      return false
     }
     const autenticacion = await res.json()
 
-    guardarToken(autenticacion?.token)
+    guardarAutenticacion(autenticacion?.token, autenticacion?.idDisciplina)
 
-    return autenticacion?.usuario || null
+    return true
   } catch (e) {
     console.log(`error: ${e}`)
-    return null
+    return false
   }
 }

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react"
-import Grupos from "./Grupos"
 import Partido from "./Partido"
-import Cuadro from './Cuadro'
+import Torneo from './Torneo'
 import styled from 'styled-components'
 import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
 import BotonVolver from "../Comunes/BotonVolver"
@@ -18,7 +17,7 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
   useEffect(() => {
     const obtenerConfiguracion = async () => {
       const configuracionInicial = await ObtenerConfiguracion(idDisciplinaClub)
-      setVista(configuracionInicial?.pantallaMostrar ?? 'grupo')
+      setVista(configuracionInicial?.pantallaMostrar ?? 'torneo')
     }
     obtenerConfiguracion()
   }, [])
@@ -27,10 +26,8 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
     switch(vista) {
       case 'partido':
         return <Partido />
-      case 'cuadro':
-        return <Cuadro />
       default:
-        return <Grupos idDisciplinaClub={idDisciplinaClub} />
+        return <Torneo />
     }
   }
 
@@ -40,8 +37,7 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
         <BotonVolver onVolver={onVolver} />
         <Menu>
           <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
-          <BotonMenu seleccionado={vista === 'grupo'}  onClick={() => setVista('grupo')}>Grupos</BotonMenu>
-          <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro final</BotonMenuDerecha>
+          <BotonMenuDerecha seleccionado={vista === 'torneo'}  onClick={() => setVista('torneo')}>Torneo</BotonMenuDerecha>
         </Menu>
       </EncabezadoPantalla>
       { vista && renderPantalla() }

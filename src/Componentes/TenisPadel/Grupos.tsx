@@ -4,13 +4,13 @@ import styled from 'styled-components'
 import { Equipo } from '../../Tipos'
 import { ObtenerEquipos } from '../../Servicios/Equipo'
 
-const Grupos = () => {
+const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [grupos, setGrupos] = useState<string[]>([])
 
   useEffect(() => {
     const obtenerGrupos = async () => {
-      const equipos = await ObtenerEquipos()
+      const equipos = await ObtenerEquipos(idDisciplinaClub)
       if (equipos?.length) {
         setEquipos(equipos)
         let gruposDB: string[] = []

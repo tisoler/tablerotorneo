@@ -24,7 +24,7 @@ const Boton = styled.div`
   }
 
   &:active {
-    background-color: #7F1833;
+    background-color: #2E86C1;
     color: '#fff';
   }
 `

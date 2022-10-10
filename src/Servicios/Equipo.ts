@@ -2,9 +2,29 @@ import { Equipo } from "../Tipos"
 
 const { REACT_APP_BACKEND_URL } = process.env
 
-export const ObtenerEquipos = async (): Promise<Equipo[] | null> => {
+export const ObtenerEquiposParaUsuarioLogueado = async (token: string): Promise<Equipo[] | null> => {
   try {
-    const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos`)
+    const opcionesRequest = {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'auth-token': token || ''
+      },
+    }
+
+    const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos`, opcionesRequest)
+    const equipos = await res.json()
+
+    return equipos
+  } catch (e) {
+    console.log(`error: ${e}`)
+    return null
+  }
+}
+
+export const ObtenerEquipos = async (idDisciplinaClub: number): Promise<Equipo[] | null> => {
+  try {
+    const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos/${idDisciplinaClub}`)
     const equipos = await res.json()
 
     return equipos
@@ -24,7 +44,7 @@ export const ActualizarEquipo = async (
     diferenciaGames?: number
   },
   token: string,
-  limpiarToken: () => void,
+  limpiarAutenticacion: () => void,
 ): Promise<Equipo[] | null> => {
   try {
     const opcionesRequest = {
@@ -37,7 +57,7 @@ export const ActualizarEquipo = async (
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos/${idEquipo}`, opcionesRequest)
     if (res.status !== 200) {
-      limpiarToken()
+      limpiarAutenticacion()
       console.log(await res.text())
       return null
     }

@@ -17,7 +17,7 @@ export const ObtenerCuadroFinal = async (): Promise<CuadroFinal | null> => {
 export const ActualizarCuadroFinal = async (
   payload: CuadroFinalPayload,
   token: string,
-  limpiarToken: () => void,
+  limpiarAutenticacion: () => void,
 ): Promise<CuadroFinal | null> => {
   try {
     const opcionesRequest = {
@@ -30,7 +30,7 @@ export const ActualizarCuadroFinal = async (
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/cuadroFinal`, opcionesRequest)
     if (res.status !== 200) {
-      limpiarToken()
+      limpiarAutenticacion()
       console.log(await res.text())
       return null
     }

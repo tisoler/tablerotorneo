@@ -15,10 +15,9 @@ export const ObtenerConfiguracion = async (idDisciplinaClub: number): Promise<Co
 }
 
 export const ActualizarConfiguracion = async (
-  idDisciplinaClub: number,
   payload: Configuracion,
   token: string,
-  limpiarToken: () => void,
+  limpiarAutenticacion: () => void,
 ): Promise<Configuracion | null> => {
   try {
     const opcionesRequest = {
@@ -29,9 +28,9 @@ export const ActualizarConfiguracion = async (
         'auth-token': token || ''
       },
     }
-    const res = await fetch(`${REACT_APP_BACKEND_URL}/configuracion/${idDisciplinaClub}`, opcionesRequest)
+    const res = await fetch(`${REACT_APP_BACKEND_URL}/configuracion`, opcionesRequest)
     if (res.status !== 200) {
-      limpiarToken()
+      limpiarAutenticacion()
       console.log(await res.text())
       return null
     }

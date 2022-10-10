@@ -1,15 +1,18 @@
 import { useEffect, useState } from "react"
 import styled from 'styled-components'
-import ConEncabezado from '../../hoc/ConEncabezado'
 import { ObtenerDisciplinasClubes } from "../../Servicios/DisciplinaClub"
-import { DisciplinaClub } from "../../Tipos"
-import PartidoFutbol from "../Futbol/PartidoFutbol"
-import PartidoHockey from "../Hockey/PartidoHockey"
-import TableroUsuario from "../TenisPadel/TableroUsuario"
+import { DisciplinaClub, Torneo } from "../../Tipos"
+import TableroUsuarioPadelTenis from "../TenisPadel/TableroUsuario"
+import TableroUsuarioFutbol from "../Futbol/TableroUsuario"
+import TableroUsuarioHockey from "../Hockey/TableroUsuario"
+import EncabezadoGeneral from './Encabezado'
+import EncabezadoPersonalizado from './EncabezadoPersonalizado'
+import { ObtenerTorneoActual } from "../../Servicios/Torneo"
 
 const MenuInicio = () => {
   const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>([])
   const [disciplinaClub, setDisciplinaClub] = useState<DisciplinaClub>()
+  const [torneoActual, setTorneoActual] = useState<Torneo | null>()
 
   useEffect(() => {
     const obtenerDisciplinasClubes = async () => {
@@ -19,37 +22,80 @@ const MenuInicio = () => {
     obtenerDisciplinasClubes()
   }, [])
 
+  useEffect(() => {
+    const obtenerDatosTorneoActual = async () => {
+      if (!disciplinaClub?.id) return null
+      const torneoActualBD = await ObtenerTorneoActual(disciplinaClub.id)
+      if (torneoActualBD) setTorneoActual(torneoActualBD)
+    }
+    obtenerDatosTorneoActual()
+  }, [disciplinaClub])
+
+  let Encabezado = <EncabezadoGeneral />
+  let VistaTableroUsuario
   if (disciplinaClub) {
+    Encabezado = torneoActual?.nombreMostrar ? <EncabezadoPersonalizado {...torneoActual} /> : <EncabezadoGeneral />
     switch (disciplinaClub.idDisciplina) {
       case 1:
       case 2:
-        return <TableroUsuario idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        VistaTableroUsuario = <TableroUsuarioPadelTenis idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        break
       case 4:
-        return <PartidoFutbol />
+        VistaTableroUsuario = <TableroUsuarioFutbol idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        break
       case 5:
-        return <PartidoHockey />
+        VistaTableroUsuario = <TableroUsuarioHockey idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        break
+    }
+
+    if (VistaTableroUsuario) {
+      return (
+        <>
+          {Encabezado}
+          {VistaTableroUsuario}
+        </>
+      )
     }
   }
 
   return (
-    <Contenedor>
-      {
-        !disciplinasClubes?.length
-          ? ( <>No hay clubes y/o disciplinas disponibles.</> )
-          : (
-            disciplinasClubes.map(disciplinaClub => (
-              <Boton key={disciplinaClub.id} onClick={() => setDisciplinaClub(disciplinaClub)}>
-                {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub} - ${disciplinaClub.nombreLocalidad}`}
-              </Boton>
-            ))
-          )
-      }
-    </Contenedor>
+    <>
+      {Encabezado}
+      <Contenedor>
+        {
+          !disciplinasClubes?.length
+            ? ( <>No hay clubes y/o disciplinas disponibles.</> )
+            : (
+              disciplinasClubes.map(disciplinaClub => (
+                <Boton
+                  key={disciplinaClub.id}
+                  onClick={() => { setTorneoActual(null); setDisciplinaClub(disciplinaClub) }}
+                  colorPrincipal={disciplinaClub.colorPrincipal}
+                  colorSecundario={disciplinaClub.colorSecundario}
+                >
+                  <ContenedorTexto>
+                    <TextoBoton>
+                      {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
+                    </TextoBoton>
+                    <TextoBoton>
+                      {`${disciplinaClub.nombreLocalidad}`}
+                    </TextoBoton>
+                  </ContenedorTexto>
+                  <Escudo>
+                    <img src={require(`../../recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Logo Que placer que vino' />
+                  </Escudo>
+                </Boton>
+              ))
+            )
+        }
+      </Contenedor>
+    </>
   )
 }
 
 const Contenedor = styled.div`
   display: flex;
+  align-items: center;
   flex-direction: column;
   align-items: center;
   width: 100%;
@@ -66,34 +112,97 @@ const Contenedor = styled.div`
   }
 `
 
-const Boton = styled.div`
+const Boton = styled.div<{ colorPrincipal?: string, colorSecundario?: string }>`
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   cursor: pointer;
   height: 70px;
-  width: 100%;
-  background-color: #ddd;
-  color: '#000';
-  border: 1px solid #215d43;
+  width: calc(50% - 2.5px);
+  background-color: #fff;
+  border-left: solid 2.5px ${props => props.colorPrincipal || '#ddd'};
+  color: #333;
   font-size: 25px;
+  font-weight: bold;
   padding: 10px;
+  margin: 5px 0;
 
   &:active {
-    background-color: #7F1833;
-    color: '#fff';
+    background-color: #ddd;
+    color: #000;
+  }
+
+  &:hover {
+    background-color: ${props => props.colorPrincipal || '#fff'};
+    border-left: solid 6px ${props => props.colorSecundario || '#fff'};
+    color: ${props => props.colorSecundario ? '#fff' : '#000'};
+    width: calc(50% - 6px);
   }
 
   @media (max-width: 768px) {
     font-size: 18px;
     height: 50px;
+    width: calc(60% - 2.5px);
+    border-left: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
+    border-top: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
+    border-bottom: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
+    border-right: solid 3.5px ${props => props.colorSecundario || '#ddd'};
   }
 
   @media (max-width: 600px) {
     font-size: 16px;
     height: 45px;
+    width: calc(85% - 2.5px);
   }
 `
 
-export default ConEncabezado(MenuInicio)
+const ContenedorTexto = styled.div`
+  width: 60%;
+  display: flex;
+  flex-direction: column;
+`
+
+const TextoBoton = styled.div`
+  width: 100%;
+`
+
+const Escudo = styled.div`
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 70px;
+  height: 70px;
+  background-color: #fff;
+  border-radius: 50%;
+  right: 15px;
+
+  & img {
+    height: 50px;
+  }
+
+  @media (max-width: 768px) {\
+    height: 45px;
+    width: 45px;
+    right: 5px;
+
+    & img {
+      height: 35px;
+    }
+  }
+
+  @media (max-width: 600px) {
+    height: 45px;
+    width: 45px;
+    right: 5px;
+
+    & img {
+      height: 35px;
+    }
+  }
+`
+
+
+export default MenuInicio

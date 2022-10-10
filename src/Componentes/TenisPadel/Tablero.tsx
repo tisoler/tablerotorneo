@@ -4,7 +4,7 @@ import { Configuracion } from "../../Tipos"
 import Grupos from "./Grupos"
 import Partido from "./Partido"
 import Cuadro from './Cuadro'
-import ConEncabezado from '../../hoc/ConEncabezado'
+import EncabezadoPersonalizado from "../Comunes/EncabezadoPersonalizado"
 
 const CONFIGURACION_INICIAL: Configuracion = {
   pantallaMostrar: 'grupo',
@@ -33,11 +33,16 @@ const Tablero = () => {
       case 'cuadro':
         return <Cuadro />
       default:
-        return <Grupos />
+        return <Grupos idDisciplinaClub={1} />
     }
   }
 
-  return (renderPantalla())
+  return (
+    <>
+      <EncabezadoPersonalizado />
+      {renderPantalla()}
+    </>
+  )
 }
 
-export default ConEncabezado(Tablero)
+export default Tablero

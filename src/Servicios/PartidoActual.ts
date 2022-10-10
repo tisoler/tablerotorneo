@@ -1,4 +1,3 @@
-import { useContextoGlobal } from "../Contexto/contextoGlobal"
 import { PartidoActual, PartidoActualPayload } from "../Tipos"
 
 const { REACT_APP_BACKEND_URL } = process.env
@@ -18,7 +17,7 @@ export const ObtenerPartidoActual = async (): Promise<PartidoActual | null> => {
 export const ActualizarPartidoActual = async (
   payload: PartidoActualPayload,
   token: string,
-  limpiarToken: () => void,
+  limpiarAutenticacion: () => void,
 ): Promise<PartidoActual | null> => {
   try {
     const opcionesRequest = {
@@ -31,7 +30,7 @@ export const ActualizarPartidoActual = async (
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/partidoActual`, opcionesRequest)
     if (res.status !== 200) {
-      limpiarToken()
+      limpiarAutenticacion()
       console.log(await res.text())
       return null
     }
@@ -47,7 +46,7 @@ export const ActualizarPartidoActual = async (
 export const ActualizarGame = async (
   payload: { suma: boolean, esEquipo1: boolean },
   token: string,
-  limpiarToken: () => void,
+  limpiarAutenticacion: () => void,
 ): Promise<PartidoActual | null> => {
   try {
     const opcionesRequest = {
@@ -60,7 +59,7 @@ export const ActualizarGame = async (
     }
     const res = await fetch(`${REACT_APP_BACKEND_URL}/partidoActual/game`, opcionesRequest)
     if (res.status !== 200) {
-      limpiarToken()
+      limpiarAutenticacion()
       console.log(await res.text())
       return null
     }
