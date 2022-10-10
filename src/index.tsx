@@ -4,12 +4,15 @@ import './index.css'
 import App from './App'
 import reportWebVitals from './reportWebVitals'
 import { BrowserRouter as Router } from 'react-router-dom'
+import ProveedorGlobal from './Contexto/contextoGlobal'
 
 const root = ReactDOM.createRoot(document.getElementById("root") as HTMLElement)
 root.render(
   <React.StrictMode>
     <Router>
-      <App />
+      <ProveedorGlobal>
+        <App />
+      </ProveedorGlobal>
     </Router>
   </React.StrictMode>
 );

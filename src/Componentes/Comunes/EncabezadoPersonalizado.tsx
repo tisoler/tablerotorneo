@@ -1,27 +1,40 @@
 
 import styled from 'styled-components'
 
-const Encabezado = () => {
-  
+interface EncabezadoProps {
+  iniciales?: string,
+  nombreMostrar?: string,
+  sponsor?: string,
+  imagenSponsor?: string,
+  imagenEscudo?: string,
+  colorFondoSponsor?: string,
+}
+
+const Encabezado = (props: EncabezadoProps) => {
+  const { iniciales, nombreMostrar, sponsor, imagenSponsor, imagenEscudo, colorFondoSponsor } = props
+
   return (
     <EncabezadoDiv>
       <Titulo>
         <Iniciales>
-          APMP
+          { iniciales || '¿?' }
         </Iniciales>
         <Nombre>
-          ABIERTO DE PÁDEL DE MÁXIMO PAZ
+          { nombreMostrar || '¿Cómo va...?'}
         </Nombre>
-        <Escudo />
+        <Escudo imagenEscudo={imagenEscudo} />
       </Titulo>
       <Sponsor>
         <LogoSponsorMovil>
-          <img src={require('../recursos/logoQuePlacer.png')} alt='Logo Que placer que vino' />
+          <img
+            src={imagenSponsor ? require(`../../recursos/auspiciantes/${imagenSponsor}`) : require('../../recursos/comunes/logo.svg')}
+            alt={sponsor || 'No hay logo de sponsor'}
+          />
         </LogoSponsorMovil>
-        <Subtitulo>
-          Copa Que Placer Que Vino
+        <Subtitulo colorFondoSponsor={colorFondoSponsor}>
+          {sponsor || 'Resultados online'}
         </Subtitulo>
-        <LogoSponsorWeb />
+        <LogoSponsorWeb imagenSponsor={imagenSponsor} />
       </Sponsor>
     </EncabezadoDiv>
   )
@@ -105,11 +118,11 @@ const Nombre = styled.div`
   }
 `
 
-const Escudo = styled.div`
+const Escudo = styled.div<{ imagenEscudo?: string }>`
   display: flex;
   align-items: center;
   width: 32.5%;
-  background-image: url("./recursos/escudoSocial.png");
+  background-image: ${props => props.imagenEscudo ? `url("./recursos/clubes/${props.imagenEscudo}")` : 'url("./recursos/comunes/logo.svg")'};
   background-repeat: no-repeat;
   background-position: center;
   background-size: 65%;
@@ -134,7 +147,7 @@ const Sponsor = styled.div`
   }
 `
 
-const Subtitulo = styled.div`
+const Subtitulo = styled.div<{ colorFondoSponsor?: string }>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -143,7 +156,7 @@ const Subtitulo = styled.div`
   width: 83%;
   font-family: Verdana;
   padding: 10px 1rem 10px 0;
-  background-color: #7F1833;
+  background-color: ${props => props.colorFondoSponsor ?? '#2E86C1'};
   margin: 3px;
 
   @media (max-width: 1300px) {
@@ -212,8 +225,8 @@ const LogoSponsorMovil = styled.div`
   }
 `
 
-const LogoSponsorWeb = styled.div`
-  background-image: url("./recursos/logoQuePlacer.png");
+const LogoSponsorWeb = styled.div<{ imagenSponsor?: string }>`
+  background-image: ${props => props.imagenSponsor ? `url("./recursos/auspiciantes/${props.imagenSponsor}")` : 'url("./recursos/comunes/logo.svg")'};
   background-repeat: no-repeat;
   background-position: center;
   background-size: 90%;

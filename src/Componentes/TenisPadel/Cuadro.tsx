@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { ObtenerCuadroFinal } from '../Servicios/CuadroFinal'
-import { CuadroFinal } from '../Tipos'
-import Copa from '../recursos/copa'
+import { ObtenerCuadroFinal } from '../../Servicios/CuadroFinal'
+import { CuadroFinal } from '../../Tipos'
+import Copa from '../../recursos/comunes/copa'
 
 const CUADRO_FINAL_INICIAL: CuadroFinal = {
   cuartosAEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
@@ -497,7 +497,7 @@ const BloqueEquipoBordo = styled.div`
   justify-content: center;
   width: 100%;
   height: 15%;
-  background-color: #7F1833;
+  background-color: #2E86C1;
   color: #fff;
 
   @media (max-width: 768px) {
@@ -506,7 +506,7 @@ const BloqueEquipoBordo = styled.div`
 `
 
 const Jugador = styled.div`
-  font-size: 20px;
+  font-size: 1em;
   line-height: 30px;
   padding-left: 12px;
   font-weight: bold;
@@ -519,7 +519,7 @@ const Jugador = styled.div`
 `
 
 const JugadorBordo = styled.div`
-  font-size: 24px;
+  font-size: 1.3em;
   line-height: 30px;
   font-weight: bold;
 

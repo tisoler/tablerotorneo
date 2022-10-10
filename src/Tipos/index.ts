@@ -2,14 +2,17 @@
 export interface Equipo {
   id: number,
   nombreJugador1: string,
-  nombreJugador2: string,
+  nombreJugador2?: string,
   idGrupo?: string | null,
   posicion?: number | null,
   partidosJugados?: number | null,
   partidosGanados?: number | null,
+  diferenciaSets?: string | null,
+  diferenciaGames?: string | null,
 }
 
 export interface PartidoActual {
+  id?: number,
   equipo1: Equipo,
   equipo2: Equipo,
   equipo1Game: number | null,
@@ -43,8 +46,56 @@ export interface PartidoActualPayload {
   tipoGame?: 'game' | 'tie-break' | null,
 }
 
+export interface PartidoFutbol {
+  id: number,
+  equipoLocal: Equipo,
+  equipoVisitante: Equipo,
+  golesEquipoLocal: number,
+  golesEquipoVisitante: number,
+  fecha: Date,
+  numeroTiempo: number,
+  idTorneoDisciplinaClub: number,
+}
+
+export interface PartidoFutbolPayload {
+  id?: number,
+  idEquipoLocal?: number,
+  idEquipoVisitante?: number,
+  golesEquipoLocal?: number | null,
+  golesEquipoVisitante?: number | null,
+  fecha?: Date,
+  numeroTiempo?: number | null,
+  idTorneoDisciplinaClub?: number | null,
+  activo?: number | null,
+}
+
+export interface PartidoHockey {
+  id: number,
+  equipoLocal: Equipo,
+  equipoVisitante: Equipo,
+  golesEquipoLocal: number,
+  golesEquipoVisitante: number,
+  fecha: Date,
+  numeroTiempo: number,
+  idTorneoDisciplinaClub: number,
+}
+
+export interface PartidoHockeyPayload {
+  id?: number,
+  idEquipoLocal?: number,
+  idEquipoVisitante?: number,
+  golesEquipoLocal?: number | null,
+  golesEquipoVisitante?: number | null,
+  fecha?: Date,
+  numeroTiempo?: number | null,
+  idTorneoDisciplinaClub?: number | null,
+  activo?: number | null,
+}
+
+export type PantallaMostrar = 'grupo' | 'partido' | 'cuadro' | 'torneo'
+
 export interface Configuracion {
-  pantallaMostrar: 'grupo' | 'partido' | 'cuadro',
+  pantallaMostrar: PantallaMostrar,
 }
 
 export interface CuadroFinal {
@@ -81,4 +132,26 @@ export interface CuadroFinalPayload {
   finalEquipo1?: number,
   finalEquipo2?: number,
   campeon?: number,
+}
+
+export interface DisciplinaClub {
+  id: number,
+  idClub: number,
+  nombreClub: string,
+  idDisciplina: number;
+  nombreDisciplina: string,
+  idLocalidad: number,
+  nombreLocalidad: string,
+  colorPrincipal: string,
+  colorSecundario: string,
+  imagenEscudo: string,
+}
+
+export interface Torneo {
+  iniciales?: string,
+  nombreMostrar?: string,
+  sponsor?: string,
+  imagenSponsor?: string,
+  imagenEscudo?: string,
+  colorFondoSponsor?: string,
 }

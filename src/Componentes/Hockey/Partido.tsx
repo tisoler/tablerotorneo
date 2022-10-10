@@ -1,5 +1,4 @@
-import { useState } from 'react'
-import { useEffect } from 'react'
+
 import styled from 'styled-components'
 
 const PartidoHockey = () => {
@@ -112,47 +111,6 @@ const Jugador = styled.div`
     font-size: 15px;
     line-height: 20px;
     margin: 5px 0;
-  }
-`
-/*
-const PelotaConEstilo = styled(Pelota)`
-  @media (max-width: 768px) {
-    svg{
-      width: 30px;
-      height: 30px;
-    }
-  }
-
-  @media (max-width: 600px) {
-    svg{
-      width: 10px;
-      height: 30px;
-      viewBox: "0 0 100 100"
-    }
-  }
-`
-*/
-
-const Set = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #215d43;
-  background-color: #fff;
-  width: 10%;
-  color: #215d43;
-  font-family: Tahoma;
-  font-size: 90px;
-  line-height: 170px;
-
-  @media (max-width: 768px) {
-    font-size: 50px;
-    border: 1px solid #215d43;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 25px;
-    border: 1px solid #215d43;
   }
 `
 

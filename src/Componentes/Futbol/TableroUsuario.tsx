@@ -1,18 +1,23 @@
 import { useEffect, useState } from "react"
-import Grupos from "./Grupos"
 import Partido from "./Partido"
-import Cuadro from './Cuadro'
+import Torneo from './Torneo'
 import styled from 'styled-components'
-import ConEncabezado from '../hoc/ConEncabezado'
-import { ObtenerConfiguracion } from "../Servicios/Configuracion"
+import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
+import BotonVolver from "../Comunes/BotonVolver"
+import { PantallaMostrar } from "../../Tipos"
 
-const TableroUsuario = () => {
-  const [vista, setVista] = useState<'grupo' | 'partido' | 'cuadro'>()
+interface TableroUsuarioProps {
+  idDisciplinaClub: number,
+  onVolver: () => void,
+}
+
+const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => {
+  const [vista, setVista] = useState<PantallaMostrar>()
 
   useEffect(() => {
     const obtenerConfiguracion = async () => {
-      const configuracionInicial = await ObtenerConfiguracion()
-      setVista(configuracionInicial?.pantallaMostrar ?? 'grupo')
+      const configuracionInicial = await ObtenerConfiguracion(idDisciplinaClub)
+      setVista(configuracionInicial?.pantallaMostrar ?? 'torneo')
     }
     obtenerConfiguracion()
   }, [])
@@ -21,20 +26,20 @@ const TableroUsuario = () => {
     switch(vista) {
       case 'partido':
         return <Partido />
-      case 'cuadro':
-        return <Cuadro />
       default:
-        return <Grupos />
+        return <Torneo />
     }
   }
 
   return (
     <Contenedor>
-      <Menu>
-        <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
-        <BotonMenu seleccionado={vista === 'grupo'}  onClick={() => setVista('grupo')}>Grupos</BotonMenu>
-        <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro final</BotonMenuDerecha>
-      </Menu>
+      <EncabezadoPantalla>
+        <BotonVolver onVolver={onVolver} />
+        <Menu>
+          <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
+          <BotonMenuDerecha seleccionado={vista === 'torneo'}  onClick={() => setVista('torneo')}>Torneo</BotonMenuDerecha>
+        </Menu>
+      </EncabezadoPantalla>
       { vista && renderPantalla() }
     </Contenedor>
   )
@@ -56,6 +61,13 @@ const Contenedor = styled.div`
   @media (max-width: 600px) {
     margin-top: 40px;
   }
+`
+
+const EncabezadoPantalla = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
 `
 
 const Menu = styled.div`
@@ -81,7 +93,7 @@ const BotonMenu = styled.div<{ seleccionado: boolean }>`
   cursor: pointer;
   height: 70px;
   width: 100%;
-  background-color: ${props => props.seleccionado ? '#7F1833' : '#ddd' };
+  background-color: ${props => props.seleccionado ? '#2E86C1' : '#ddd' };
   color: ${props => props.seleccionado ? '#fff' : '#000' };
   border: 1px solid #215d43;
   font-size: 25px;
@@ -108,4 +120,4 @@ const BotonMenuDerecha = styled(BotonMenu)`
   border-bottom-right-radius: 25px;
 `
 
-export default ConEncabezado(TableroUsuario)
+export default TableroUsuario
