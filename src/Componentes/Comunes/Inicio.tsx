@@ -144,17 +144,28 @@ const Boton = styled.div<{ colorPrincipal?: string, colorSecundario?: string }>`
   @media (max-width: 768px) {
     font-size: 18px;
     height: 50px;
-    width: calc(60% - 2.5px);
+    width: calc(60% - 4px);
     border-left: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
     border-top: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
     border-bottom: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
     border-right: solid 3.5px ${props => props.colorSecundario || '#ddd'};
+
+    &:hover {
+      background-color: ${props => props.colorPrincipal || '#fff'};
+      border: solid 1.5px ${props => props.colorSecundario || '#fff'};
+      color: ${props => props.colorSecundario ? '#fff' : '#000'};
+      width: calc(60% - 4px);
+    }
   }
 
   @media (max-width: 600px) {
     font-size: 16px;
     height: 45px;
     width: calc(85% - 2.5px);
+
+    &:hover {
+      width: calc(85% - 2.5px);
+    }
   }
 `
 

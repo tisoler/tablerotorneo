@@ -31,7 +31,7 @@ const EncabezadoDiv = styled.div`
   height: 9%;
 
   @media (max-width: 768px) {
-    height: 20%;
+    height: 52px;
   }
 `
 
@@ -47,15 +47,15 @@ const ContenedorLogo = styled.div`
   justify-content: flex-end;
   font-size: 40px;
   text-align: center;
-  width: 90px;
-  height: 95px;
+  width: 85px;
+  height: 90px;
   font-family: Verdana;
   padding: 10px;
   font-weight: bold;
   border-radius: 50%;
   background-color: #2E86C1;
-  margin-top: -20px;
-  margin-left: -20px;
+  margin-top: -17px;
+  margin-left: -17px;
   padding-right: 20px;
 
   @media (max-width: 768px) {

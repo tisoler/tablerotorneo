@@ -127,3 +127,15 @@ export const ContenedorGrupos = styled.div`
   background-color: #2E86C1;
   padding: 20px 10px;
 `
+
+export const NoTorneo = styled.div`
+  display: flex;
+  justify-content: center;
+  margin-top: 50px;
+  color: #fff;
+  font-size: 25px;
+
+  @media (max-width: 768px) {
+    font-size: 20px;
+  }
+`
