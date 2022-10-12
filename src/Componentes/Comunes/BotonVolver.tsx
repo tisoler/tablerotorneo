@@ -1,4 +1,5 @@
 import styled from "styled-components"
+import { colorPrincipal } from "../../Estilos/Comunes"
 
 const BotonVolver = ({ onVolver }: { onVolver: () => void }) => (
   <Boton onClick={onVolver} />
@@ -31,8 +32,8 @@ const Boton = styled.div`
   }
 
   &:active {
-    background-color: #215d43;
-    color: #215d43;
+    background-color: ${colorPrincipal};
+    color: ${colorPrincipal};
   }
 
   @media (max-width: 768px) {

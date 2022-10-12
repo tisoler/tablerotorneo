@@ -1,5 +1,6 @@
 
 import styled from 'styled-components'
+import { colorPrincipal } from '../../Estilos/Comunes'
 
 const PartidoHockey = () => {
 
@@ -71,19 +72,19 @@ const Equipo = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 2px solid #215d43;
+  border: 2px solid ${colorPrincipal}
   background-color: #fff;
   width: 47%;
   padding: 20px;
 
   @media (max-width: 768px) {
     padding: 10px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 
   @media (max-width: 600px) {
     padding: 5px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 `
 
@@ -95,7 +96,7 @@ const Jugadores = styled.div`
 `
 
 const Jugador = styled.div`
-  color: #215d43;
+  color: ${colorPrincipal};
   font-weight: bold;
   font-family: Tahoma;
   font-size: 38px;
@@ -119,7 +120,7 @@ const Game = styled.div`
   align-items: center;
   justify-content: center;
   border: 2px solid #fff;
-  background-color: #215d43;
+  background-color: ${colorPrincipal};
   width: 20%;
   color: #fff;
   font-family: Tahoma;

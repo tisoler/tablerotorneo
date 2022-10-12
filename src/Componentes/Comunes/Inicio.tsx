@@ -8,6 +8,7 @@ import TableroUsuarioHockey from "../Hockey/TableroUsuario"
 import EncabezadoGeneral from './Encabezado'
 import EncabezadoPersonalizado from './EncabezadoPersonalizado'
 import { ObtenerTorneoActual } from "../../Servicios/Torneo"
+import { NoHayDatos } from "../../Estilos/Comunes"
 
 const MenuInicio = () => {
   const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>([])
@@ -64,7 +65,7 @@ const MenuInicio = () => {
       <Contenedor>
         {
           !disciplinasClubes?.length
-            ? ( <>No hay clubes y/o disciplinas disponibles.</> )
+            ? ( <NoHayDatos>No hay clubes y/o disciplinas disponibles.</NoHayDatos> )
             : (
               disciplinasClubes.map(disciplinaClub => (
                 <Boton
@@ -82,7 +83,7 @@ const MenuInicio = () => {
                     </TextoBoton>
                   </ContenedorTexto>
                   <Escudo>
-                    <img src={require(`../../recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Logo Que placer que vino' />
+                    <img src={require(`../../Recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' />
                   </Escudo>
                 </Boton>
               ))

@@ -2,42 +2,28 @@ import { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { ObtenerCuadroFinal } from '../../Servicios/CuadroFinal'
 import { CuadroFinal } from '../../Tipos'
-import Copa from '../../recursos/comunes/copa'
-
-const CUADRO_FINAL_INICIAL: CuadroFinal = {
-  cuartosAEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosAEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosBEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosBEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosCEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosCEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosDEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  cuartosDEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  semifinalAEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  semifinalAEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  semifinalBEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  semifinalBEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  finalEquipo1: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  finalEquipo2: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-  campeon: { id: 0, nombreJugador1: '', nombreJugador2: ''},
-}
+import Copa from '../../Recursos/comunes/copa'
+import { NoHayDatos } from '../../Estilos/Comunes'
 
 const Cuadro = () => {
-  const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal>(CUADRO_FINAL_INICIAL)
+  const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal | null>()
+  const [cargando, setCargando] = useState<boolean>(true)
   const { innerWidth: width } = window;
 
   useEffect(() => {
     const obtenerCuadroFinal = async () => {
       const cuadroFinalDB = await ObtenerCuadroFinal()
-      if (cuadroFinalDB) {
-        setCuadroFinal(cuadroFinalDB)
-      }
+      setCuadroFinal(cuadroFinalDB)
+      setCargando(false)
     }
     const intervalo = setInterval(obtenerCuadroFinal, 60000) // Refresco de datos
     obtenerCuadroFinal() // Carga inicial
 
     return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
+
+  if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
+  if (!cuadroFinal) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
 
   return (
     <ContenedorGeneral>

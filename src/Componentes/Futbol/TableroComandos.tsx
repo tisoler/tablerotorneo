@@ -17,11 +17,19 @@ import {
   Titulo,
   TituloGrande,
   Set,
+  EncabezadoTorneo,
+  ClubEncabezado,
+  DatoEquipoEncabezado,
+  FilaEquipoTorneo,
+  EquipoConEstilo,
+  DatoEquipo,
+  NombreClub,
+  ContenedorTorneo,
 } from '../../Estilos/Comunes'
 import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
 import { ActualizarEquipo, ObtenerEquiposParaUsuarioLogueado } from '../../Servicios/Equipo'
 import { CrearPartidoFutbolActual, ActualizarPartidoFutbolActual, BorrarPartidoFutbolActual, ObtenerPartidoFutbolActualParaUsuario } from '../../Servicios/PartidoFutbol'
-import { Equipo, PantallaMostrar, PartidoFutbol, PartidoFutbolPayload } from '../../Tipos'
+import { Equipo, EquipoPayload, PantallaMostrar, PartidoFutbol, PartidoFutbolPayload } from '../../Tipos'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoFutbol = {
   id: -1,
@@ -45,7 +53,6 @@ const TableroComandos = () => {
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [idEquipoLocal, setIdEquipoLocal] = useState<number>(1)
   const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(1)
-  const [grupos, setGrupos] = useState<string[]>([])
 
   const { token, limpiarAutenticacion } = useContextoGlobal()
 
@@ -67,17 +74,6 @@ const TableroComandos = () => {
       const equiposBD = await ObtenerEquiposParaUsuarioLogueado(token)
       if (equiposBD) {
         setEquipos(equiposBD)
-      }
-
-      // TORNEO
-      if (equiposBD?.length) {
-        setEquipos(equiposBD)
-        let gruposDB: string[] = []
-        for (let i = 0; i < equiposBD.length; i++) {
-          const idGrupo = equiposBD[i].idGrupo ?? '?'
-          if (idGrupo !== '?' && !gruposDB.includes(idGrupo)) gruposDB.push(idGrupo)
-        }
-        setGrupos(gruposDB)
       }
     }
 
@@ -118,6 +114,22 @@ const TableroComandos = () => {
 
   const actualizarConfiguracion = (pantalla: PantallaMostrar) => {
     ActualizarConfiguracion({ pantallaMostrar: pantalla }, token, limpiarAutenticacion)
+  }
+
+  const ordenarEquipos = (a: Equipo, b: Equipo) => {
+    let criterioA = a.posicion || 4
+    let criterioB = b.posicion || 4
+    if (criterioA !== criterioB) {
+      return criterioA > criterioB ? 1 : -1
+    }
+    criterioA = a.puntos || 0
+    criterioB = b.puntos || 0
+    return criterioA <= criterioB ? 1 : -1
+  }
+
+  const actualizarEquipo = async (idEquipo: number, payload: EquipoPayload) => {
+    const equiposActualizados = await ActualizarEquipo(idEquipo, payload, token, limpiarAutenticacion)
+    if(equiposActualizados) setEquipos(equiposActualizados)
   }
 
   const FilaGoles = ({titulo, valorGolesEquipoLocal, valorGolesEquipoVisitante}
@@ -208,85 +220,49 @@ const TableroComandos = () => {
 
       <ContenedorGrupos>
         <TituloGrande>TORNEO</TituloGrande>
-        {/*
-        <TableroGrupos>
-          {grupos.map((grupo: string) =>
-            <Grupo key={grupo}>
-              <Encabezado>
-                <NumeroGrupo>{`Grupo ${grupo}`}</NumeroGrupo>
-                <PosicionPartidosEnc>Pos</PosicionPartidosEnc>
-                <PosicionPartidosEnc>PJ</PosicionPartidosEnc>
-                <PosicionPartidosEnc>PG</PosicionPartidosEnc>
-                <PosicionPartidosEnc>Dif sets</PosicionPartidosEnc>
-                <PosicionPartidosEnc>Dif games</PosicionPartidosEnc>
-              </Encabezado>
-              { equipos
-                .filter((equipo: Equipo) => equipo.idGrupo === grupo)
-                .map((equipo: Equipo) => (
-                  <EquipoConEstilo key={equipo.id}>
-                    <Jugadores>
-                      <div>{equipo.nombreJugador1}</div>
-                      <div>{equipo.nombreJugador2}</div>
-                    </Jugadores>
-                    <PosicionPartidos>
-                      <SetInput
-                        ancho={40}
-                        value={equipo.posicion || ''}
-                        onChange={async (evt) => {
-                          if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { posicion: parseInt(evt?.target?.value) }, token, limpiarAutenticacion)
-                          if(equiposActualizados) setEquipos(equiposActualizados)
-                        }}
-                      >
-                      </SetInput>
-                    </PosicionPartidos>
-                    <PosicionPartidos>
-                      <SetInput
-                        ancho={40}
-                        value={equipo.partidosJugados || ''}
-                        onChange={async (evt) => {
-                          if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) }, token, limpiarAutenticacion)
-                          if(equiposActualizados) setEquipos(equiposActualizados)
-                        }}
-                      >
-                      </SetInput>
-                    </PosicionPartidos>
-                    <PosicionPartidos>
-                      <SetInput
-                        ancho={40}
-                        value={equipo.partidosGanados || ''}
-                        onChange={async (evt) => {
-                          if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosGanados: parseInt(evt?.target?.value) }, token, limpiarAutenticacion)
-                          if(equiposActualizados) setEquipos(equiposActualizados)
-                        }}
-                      >
-                      </SetInput>
-                    </PosicionPartidos>
-                    <PosicionPartidos>
-                      <SetInput
-                        ancho={40}
-                        value={equipo.diferenciaSets || ''}
-                        onChange={async (evt) => cargarSetGame(evt, 'diferenciaSets', equipo.id)}
-                      >
-                      </SetInput>
-                    </PosicionPartidos>
-                    <PosicionPartidos>
-                      <SetInput
-                        ancho={40}
-                        value={equipo.diferenciaGames || ''}
-                        onChange={async (evt) => cargarSetGame(evt, 'diferenciaGames', equipo.id)}
-                      >
-                      </SetInput>
-                    </PosicionPartidos>
-                  </EquipoConEstilo>
-                ))
-              }
-            </Grupo>
-          )}
-        </TableroGrupos>
-        */}
+        <ContenedorTorneo>
+          <EncabezadoTorneo>
+            <ClubEncabezado ancho={70}>Club</ClubEncabezado>
+            <DatoEquipoEncabezado ancho={15}>POS</DatoEquipoEncabezado>
+            <DatoEquipoEncabezado ancho={15}>PTS</DatoEquipoEncabezado>
+          </EncabezadoTorneo>
+          { equipos
+            .sort(ordenarEquipos)
+            .map((equipo: Equipo) => (
+              <FilaEquipoTorneo key={equipo.id}>
+                <div style={{ width: '7px' }}>&nbsp;</div>
+                <EquipoConEstilo>
+                  <NombreClub ancho={70}>
+                    <div>{equipo.nombreJugador1}</div>
+                  </NombreClub>
+                  <DatoEquipo ancho={15}>
+                    <SetInput
+                      ancho={40}
+                      value={equipo.posicion || ''}
+                      onChange={async (evt) => {
+                        if (isNaN(Number(evt?.target?.value))) return
+                        actualizarEquipo(equipo.id, { posicion: parseInt(evt?.target?.value) || 0 })
+                      }}
+                    >
+                    </SetInput>
+                  </DatoEquipo>
+                  <DatoEquipo ancho={15}>
+                  <SetInput
+                      ancho={40}
+                      value={equipo.puntos || ''}
+                      onChange={async (evt) => {
+                        if (isNaN(Number(evt?.target?.value))) return
+                        actualizarEquipo(equipo.id, { puntos: parseInt(evt?.target?.value) || 0 })
+                      }}
+                    >
+                    </SetInput>
+                  </DatoEquipo>
+                </EquipoConEstilo>
+                <div style={{ width: '7px' }}>&nbsp;</div>
+              </FilaEquipoTorneo>
+            ))
+          }
+        </ContenedorTorneo>
       </ContenedorGrupos>
     </div>
   )

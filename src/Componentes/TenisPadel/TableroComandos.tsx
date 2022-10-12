@@ -23,7 +23,7 @@ import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
 import { ActualizarCuadroFinal, ObtenerCuadroFinal } from '../../Servicios/CuadroFinal'
 import { ActualizarEquipo, ObtenerEquiposParaUsuarioLogueado } from '../../Servicios/Equipo'
 import { ActualizarGame, ActualizarPartidoActual, ObtenerPartidoActual } from '../../Servicios/PartidoActual'
-import { CuadroFinal, CuadroFinalPayload, Equipo, PantallaMostrar, PartidoActual, PartidoActualPayload } from '../../Tipos'
+import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoActual, PartidoActualPayload } from '../../Tipos'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
   equipo1: {
@@ -244,6 +244,11 @@ const TableroComandos = () => {
     ActualizarConfiguracion({ pantallaMostrar: pantalla }, token, limpiarAutenticacion)
   }
 
+  const actualizarEquipo = async (idEquipo: number, payload: EquipoPayload) => {
+    const equiposActualizados = await ActualizarEquipo(idEquipo, payload, token, limpiarAutenticacion)
+    if(equiposActualizados) setEquipos(equiposActualizados)
+  }
+
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
       <TableroPantallas>
@@ -399,8 +404,7 @@ const TableroComandos = () => {
                         value={equipo.posicion || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { posicion: parseInt(evt?.target?.value) }, token, limpiarAutenticacion)
-                          if(equiposActualizados) setEquipos(equiposActualizados)
+                          await actualizarEquipo(equipo.id, { posicion: parseInt(evt?.target?.value) })
                         }}
                       >
                       </SetInput>
@@ -411,8 +415,7 @@ const TableroComandos = () => {
                         value={equipo.partidosJugados || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) }, token, limpiarAutenticacion)
-                          if(equiposActualizados) setEquipos(equiposActualizados)
+                          await actualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) })
                         }}
                       >
                       </SetInput>
@@ -423,8 +426,7 @@ const TableroComandos = () => {
                         value={equipo.partidosGanados || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          const equiposActualizados = await ActualizarEquipo(equipo.id, { partidosGanados: parseInt(evt?.target?.value) }, token, limpiarAutenticacion)
-                          if(equiposActualizados) setEquipos(equiposActualizados)
+                          await actualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) })
                         }}
                       >
                       </SetInput>

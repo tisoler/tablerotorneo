@@ -1,6 +1,7 @@
 
 import styled from 'styled-components'
-import Logo from '../../recursos/comunes/logo'
+import { colorPrincipal } from '../../Estilos/Comunes'
+import Logo from '../../Recursos/comunes/logo'
 
 interface EncabezadoProps {
   iniciales?: string,
@@ -29,7 +30,7 @@ const Encabezado = (props: EncabezadoProps) => {
         <LogoSponsorMovil colorFondoSponsor={colorFondoSponsor}>
           {
             imagenSponsor
-              ? <img src={require(`../../recursos/auspiciantes/${imagenSponsor}`)} alt={sponsor || '¿Cómo va? Resultados online.'} />
+              ? <img src={require(`../../Recursos/auspiciantes/${imagenSponsor}`)} alt={sponsor || '¿Cómo va? Resultados online.'} />
               : <ContenedorLogoGeneral><Logo /></ContenedorLogoGeneral>
           }
         </LogoSponsorMovil>
@@ -47,7 +48,7 @@ const EncabezadoDiv = styled.div`
   width: 100%;
   background-color: #fff;
   max-height: 100px;
-  height: 9%;
+  height: 80px;
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -75,7 +76,7 @@ const Iniciales = styled.div`
   width: 17.5%;
   font-family: Verdana;
   padding: 10px;
-  background-color: #215d43;
+  background-color: ${colorPrincipal};
   border-bottom: 1px solid #fff;
   font-weight: bold;
 
@@ -99,7 +100,7 @@ const Nombre = styled.div`
   align-items: center;
   font-size: 23px;
   text-align: center;
-  color: #215d43;
+  color: ${colorPrincipal};
   width: 50%;
   font-family: Verdana;
   padding: 10px 0 10px 30px;

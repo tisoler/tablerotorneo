@@ -1,5 +1,6 @@
 
 import styled from 'styled-components'
+import { colorPrincipal } from '../../Estilos/Comunes'
 
 
 const PartidoFutbol = () => {
@@ -105,7 +106,7 @@ const Fila = styled.div`
 const FilaLocal = styled.div`
   display: flex;
   width: 30%;
-  border: 2px solid #215d43;
+  border: 2px solid ${colorPrincipal};
   align-items: center;
 
   @media (max-width: 768px) {
@@ -123,7 +124,7 @@ const FilaLocal = styled.div`
 const ResultadoLocal = styled.div`
   display: flex;
   width: 10%;
-  border: 2px solid #215d43;
+  border: 2px solid ${colorPrincipal};
   background-color: #fff;
   height: 50%;
   justify-content: center;
@@ -181,7 +182,7 @@ const Tiempo = styled.div`
 const ResultadoVisitante = styled.div`
   display: flex;
   width: 10%;
-  border: 2px solid #215d43;
+  border: 2px solid ${colorPrincipal};
   background-color: #fff;
   height: 50%;
   justify-content: center;
@@ -225,12 +226,12 @@ const EquipoLocal = styled.div`
 
   @media (max-width: 768px) {
     padding: 10px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 
   @media (max-width: 600px) {
     padding: 5px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
     height: 50%;
   }
 `
@@ -245,12 +246,12 @@ const EquipoVisitante = styled.div`
 
   @media (max-width: 768px) {
     padding: 10px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 
   @media (max-width: 600px) {
     padding: 5px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
     justify-content: flex-start;
     height: 50%;
   }
@@ -261,7 +262,7 @@ const LogoEquipo = styled.div`
   align-items: center;
   justify-content: center;
   border: 2px solid #fff;
-  background-color: #215d43;
+  background-color: ${colorPrincipal};
   width: 30%;
   color: #fff;
   font-family: Tahoma;

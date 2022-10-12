@@ -3,39 +3,16 @@ import { useEffect } from 'react'
 import styled from 'styled-components'
 import { ObtenerPartidoActual } from '../../Servicios/PartidoActual'
 import { PartidoActual } from '../../Tipos'
-import Pelota from '../../recursos/comunes/pelota'
-
-const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
-  equipo1: {
-    id: 0,
-    nombreJugador1: 'Jugador/a 1',
-    nombreJugador2: 'Jugador/a 2',
-  },
-  equipo2: {
-    id: 0,
-    nombreJugador1: 'Jugador/a 1',
-    nombreJugador2: 'Jugador/a 2',
-  },
-  equipo1Game: 0,
-  equipo2Game: 0,
-  equipo1Set1: 0,
-  equipo1Set2: 0,
-  equipo1Set3: 0,
-  equipo2Set1: 0,
-  equipo2Set2: 0,
-  equipo2Set3: 0,
-  setActual: 1,
-  tipoSet: 'set',
-  sacaEquipo1: true,
-  tipoGame: 'game',
-}
+import Pelota from '../../Recursos/comunes/pelota'
+import { colorPrincipal, NoHayDatos } from '../../Estilos/Comunes'
 
 const Partido = () => {
-  const [partidoActual, setPartidoActual] = useState<PartidoActual>(PARTIDO_ACTUAL_INICIAL)
+  const [partidoActual, setPartidoActual] = useState<PartidoActual | null>()
   const [mostrarSet1, setMostrarSet1] = useState<boolean>(true)
   const [mostrarSet2, setMostrarSet2] = useState<boolean>(false)
   const [mostrarSet3, setMostrarSet3] = useState<boolean>(false)
   const [mostrarGame, setMostrarGame] = useState<boolean>(false)
+  const [cargando, setCargando] = useState<boolean>(true)
 
   useEffect(() => {
     const obtenerPartidoActual = async () => {
@@ -60,13 +37,19 @@ const Partido = () => {
         setMostrarSet2(!!partidoActualDB?.setActual && partidoActualDB.setActual >= 2)
         setMostrarSet3(!!partidoActualDB?.setActual && partidoActualDB.setActual >= 3)
         setMostrarGame(!partidoActualDB?.tipoSet || partidoActualDB.tipoSet === 'set')
+      } else {
+        setPartidoActual(null)
       }
+      setCargando(false)
     }
     const intervalo = setInterval(obtenerPartidoActual, 1500) // Refresco de datos
     obtenerPartidoActual() // Carga inicial
 
     return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
+
+  if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
+  if (!partidoActual) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
 
   return (
     <Tablero>
@@ -155,19 +138,19 @@ const Equipo = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border: 2px solid #215d43;
+  border: 2px solid ${colorPrincipal};
   background-color: #fff;
   width: 47%;
   padding: 20px;
 
   @media (max-width: 768px) {
     padding: 10px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 
   @media (max-width: 600px) {
     padding: 5px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 `
 
@@ -179,7 +162,7 @@ const Jugadores = styled.div`
 `
 
 const Jugador = styled.div`
-  color: #215d43;
+  color: ${colorPrincipal};
   font-weight: bold;
   font-family: Tahoma;
   font-size: 38px;
@@ -219,22 +202,22 @@ const Set = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px solid #215d43;
+  border: 2px solid ${colorPrincipal};
   background-color: #fff;
   width: 10%;
-  color: #215d43;
+  color: ${colorPrincipal};
   font-family: Tahoma;
   font-size: 90px;
   line-height: 170px;
 
   @media (max-width: 768px) {
     font-size: 50px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 
   @media (max-width: 600px) {
     font-size: 25px;
-    border: 1px solid #215d43;
+    border: 1px solid ${colorPrincipal};
   }
 `
 
@@ -243,7 +226,7 @@ const Game = styled.div`
   align-items: center;
   justify-content: center;
   border: 2px solid #fff;
-  background-color: #215d43;
+  background-color: ${colorPrincipal};
   width: 20%;
   color: #fff;
   font-family: Tahoma;

@@ -1,4 +1,4 @@
-import './App.css';
+import './App.css'
 import styled from 'styled-components'
 import Rutas from './Rutas'
 
