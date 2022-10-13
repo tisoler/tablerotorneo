@@ -1,284 +1,109 @@
 
-import styled from 'styled-components'
-import { colorPrincipal } from '../../Estilos/Comunes'
+import { useEffect, useState } from 'react'
+import {
+  ContenedorTiempoCuarto,
+  ContenedorTiempoCuartoMovil,
+  ContenedorTiempoResultado, Cuarto,
+  EquipoLocal,
+  EquipoVisitante,
+  EscudoPartido,
+  EscudoPartidoMovil,
+  FilaResultado,
+  FilaResultadoMovil,
+  NoHayDatos,
+  Resultado,
+  ResultadoLocal,
+  ContenedorPartido,
+  Tiempo
+} from '../../Estilos/Comunes'
+import { ObtenerPartidoFutbolActual } from '../../Servicios/PartidoFutbol'
+import { PartidoFutbol as PartidoFutbolTipo } from '../../Tipos'
 
+const PartidoFutbol = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
+  const [partidoActual, setPartidoActual] = useState<PartidoFutbolTipo | null>()
+  const [cargando, setCargando] = useState<boolean>(true)
 
-const PartidoFutbol = () => {
+  useEffect(() => {
+    const obtenerPartidoFutbolActual = async () => {
+      const partidoFutbolDB = await ObtenerPartidoFutbolActual(idDisciplinaClub)
+      if (partidoFutbolDB) {
+        setPartidoActual({
+          ...partidoFutbolDB,
+          golesEquipoLocal: partidoFutbolDB.golesEquipoLocal ?? 0,
+          golesEquipoVisitante: partidoFutbolDB.golesEquipoVisitante ?? 0,
+          numeroTiempo: partidoFutbolDB.numeroTiempo ?? 1,
+          idTorneoDisciplinaClub: partidoFutbolDB.idTorneoDisciplinaClub ?? -1,
+        })
+      } else {
+        setPartidoActual(null)
+      }
+      setCargando(false)
+    }
+    const intervalo = setInterval(obtenerPartidoFutbolActual, 30000) // Refresco de datos
+    obtenerPartidoFutbolActual() // Carga inicial
+
+    return () => { if (intervalo) clearInterval(intervalo) }
+  }, [])
+
+  if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
+  if (!partidoActual) return <NoHayDatos>No hay partido en curso.</NoHayDatos>
+
+  let minutosTiempo = 0
+  if (!partidoActual.numeroTiempo || partidoActual.numeroTiempo === 1) {
+    minutosTiempo = partidoActual.minutosPrimerTiempo ?? 0
+  } else {
+    minutosTiempo = partidoActual.minutosSegundoTiempo ?? 0
+  }
 
   return (
-    <Tablero>
-      <Fila>
-        <FilaLocal>
-          <LogoEquipo>
+    <ContenedorPartido>
+      <FilaResultadoMovil>
+        <EscudoPartidoMovil>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoLocal?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoLocal?.nombreJugador1 || 'equipo local'}`}
+          />
+        </EscudoPartidoMovil>
+        <ContenedorTiempoCuartoMovil>
+          <Cuarto>{partidoActual.numeroTiempo || 1} T</Cuarto>
+          <Tiempo>{minutosTiempo}'</Tiempo>
+        </ContenedorTiempoCuartoMovil>
+        <EscudoPartidoMovil>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoVisitante?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoVisitante?.nombreJugador1 || 'equipo visitante'}`}
+          />
+        </EscudoPartidoMovil>
+      </FilaResultadoMovil>
 
-          </LogoEquipo>
-          <EquipoLocal>
-            Atletico Paz
-          </EquipoLocal>
-          <ResultadoLocal>
-            1
-          </ResultadoLocal>
-        </FilaLocal>
+      <FilaResultado>
+        <EscudoPartido>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoLocal?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoLocal?.nombreJugador1 || 'equipo local'}`}
+          />
+        </EscudoPartido>
+        <EquipoLocal>{partidoActual.equipoLocal?.nombreJugador1 || 'equipo local'}</EquipoLocal>
 
-        <ContenedorTiempoCuarto>
-        <Cuarto>
-          2 T
-        </Cuarto>
-        <Tiempo>
-            12:45
-        </Tiempo>
-        </ContenedorTiempoCuarto>
+        <ContenedorTiempoResultado>
+          <ResultadoLocal>{partidoActual.golesEquipoLocal || 0}</ResultadoLocal>
+          <ContenedorTiempoCuarto>
+            <Cuarto>{partidoActual.numeroTiempo || 1} T</Cuarto>
+            <Tiempo>{minutosTiempo}'</Tiempo>
+          </ContenedorTiempoCuarto>
+          <Resultado>{partidoActual.golesEquipoVisitante || 0}</Resultado>
+        </ContenedorTiempoResultado>
 
-        <FilaVisitante>
-          <ResultadoVisitante>
-            1
-          </ResultadoVisitante>
-          <EquipoVisitante>
-            Los Andes
-          </EquipoVisitante>
-
-          <LogoEquipo>
-
-          </LogoEquipo>
-        </FilaVisitante>
-      </Fila>
-    </Tablero>
+        <EquipoVisitante>{partidoActual.equipoVisitante?.nombreJugador1 || 'equipo local'}</EquipoVisitante>
+        <EscudoPartido>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoVisitante?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoVisitante?.nombreJugador1 || 'equipo visitante'}`}
+          />
+        </EscudoPartido>
+      </FilaResultado>
+    </ContenedorPartido>
   )
 }
-
-const Tablero = styled.div`
-  display: flex;
-  
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100vh;
-
-
-  @media (max-width: 768px) {
-    margin: 50px 0;
-  }
-
-  @media (max-width: 600px) {
-    margin: 40px 0;
-  }
-`
-const ContenedorTiempoCuarto = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  width:10%;
-  background-color: #fff;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 50px;
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-  }
-`
-
-
-const Fila = styled.div`
-  display: flex;
-  height: 80px;
-  width: 100%;
-  justify-content: center;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 200px;
-    width: 80%;
-    display: flex;
-    flex-direction: column;
-  }
-`
-
-const FilaLocal = styled.div`
-  display: flex;
-  width: 30%;
-  border: 2px solid ${colorPrincipal};
-  align-items: center;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 70px;
-    width: 100%;
-  }
-`
-
-
-const ResultadoLocal = styled.div`
-  display: flex;
-  width: 10%;
-  border: 2px solid ${colorPrincipal};
-  background-color: #fff;
-  height: 50%;
-  justify-content: center;
-  align-items:center;
-
-  @media (max-width: 768px) {
-    height: 50%;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 50%;
-    width: 30%;
-  }
-`
-const Cuarto = styled.div`
-  display: flex;
-  width: 100%;
-  background-color: #fff;
-  justify-content: center;
-  align-items:center;
-  height:50%;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 50%;
-    width: 100%;
-  }
-`
-
-const Tiempo = styled.div`
-  display: flex;
-  width: 100%;
-  height:50%;
-  background-color: #fff;
-  justify-content: center;
-  align-items:center;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 50%;
-    width: 100%;
-  }
-`
-
-
-const ResultadoVisitante = styled.div`
-  display: flex;
-  width: 10%;
-  border: 2px solid ${colorPrincipal};
-  background-color: #fff;
-  height: 50%;
-  justify-content: center;
-  align-items:center;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 50%;
-    width: 30%;
-  }
-`
-
-const FilaVisitante = styled.div`
-  display: flex;
-  width: 30%;
-  align-items:center;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 70px;
-    width: 100%;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-  }
-`
-const EquipoLocal = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  background-color: #fff;
-  width: 60%;
-  height: 50%;
-
-  @media (max-width: 768px) {
-    padding: 10px;
-    border: 1px solid ${colorPrincipal};
-  }
-
-  @media (max-width: 600px) {
-    padding: 5px;
-    border: 1px solid ${colorPrincipal};
-    height: 50%;
-  }
-`
-
-const EquipoVisitante = styled.div`
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  background-color: #fff;
-  width: 60%;
-  height: 50%;
-
-  @media (max-width: 768px) {
-    padding: 10px;
-    border: 1px solid ${colorPrincipal};
-  }
-
-  @media (max-width: 600px) {
-    padding: 5px;
-    border: 1px solid ${colorPrincipal};
-    justify-content: flex-start;
-    height: 50%;
-  }
-`
-
-const LogoEquipo = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #fff;
-  background-color: ${colorPrincipal};
-  width: 30%;
-  color: #fff;
-  font-family: Tahoma;
-  font-size: 90px;
-  line-height: 170px;
-  height: 100%;
-
-  @media (max-width: 768px) {
-    font-size: 50px;
-    border: 1px solid #fff;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 25px;
-    border: 1px solid #fff;
-  }
-`
 
 export default PartidoFutbol

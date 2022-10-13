@@ -1,141 +1,119 @@
 
-import styled from 'styled-components'
-import { colorPrincipal } from '../../Estilos/Comunes'
+import { useEffect, useState } from 'react'
+import {
+  ContenedorTiempoCuarto,
+  ContenedorTiempoCuartoMovil,
+  ContenedorTiempoResultado, Cuarto,
+  EquipoLocal,
+  EquipoVisitante,
+  EscudoPartido,
+  EscudoPartidoMovil,
+  FilaResultado,
+  FilaResultadoMovil,
+  NoHayDatos,
+  Resultado,
+  ResultadoLocal,
+  ContenedorPartido,
+  Tiempo
+} from '../../Estilos/Comunes'
+import { ObtenerPartidoHockeyActual } from '../../Servicios/PartidoHockey'
+import { PartidoHockey as PartidoHockeyTipo } from '../../Tipos'
 
-const PartidoHockey = () => {
+const PartidoHockey = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
+  const [partidoActual, setPartidoActual] = useState<PartidoHockeyTipo | null>()
+  const [cargando, setCargando] = useState<boolean>(true)
+
+  useEffect(() => {
+    const obtenerPartidoHockeyActual = async () => {
+      const partidoHockeyDB = await ObtenerPartidoHockeyActual(idDisciplinaClub)
+      if (partidoHockeyDB) {
+        setPartidoActual({
+          ...partidoHockeyDB,
+          golesEquipoLocal: partidoHockeyDB.golesEquipoLocal ?? 0,
+          golesEquipoVisitante: partidoHockeyDB.golesEquipoVisitante ?? 0,
+          numeroCuarto: partidoHockeyDB.numeroCuarto ?? 1,
+          idTorneoDisciplinaClub: partidoHockeyDB.idTorneoDisciplinaClub ?? -1,
+        })
+      } else {
+        setPartidoActual(null)
+      }
+      setCargando(false)
+    }
+    const intervalo = setInterval(obtenerPartidoHockeyActual, 30000) // Refresco de datos
+    obtenerPartidoHockeyActual() // Carga inicial
+
+    return () => { if (intervalo) clearInterval(intervalo) }
+  }, [])
+
+  if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
+  if (!partidoActual) return <NoHayDatos>No hay partido en curso.</NoHayDatos>
+
+  let minutosCuarto = 0
+  if (partidoActual.numeroCuarto) {
+    switch (partidoActual.numeroCuarto) {
+      case 2:
+        minutosCuarto = partidoActual.minutosSegundoCuarto ?? 0
+        break
+      case 3:
+        minutosCuarto = partidoActual.minutosTercerCuarto ?? 0
+        break
+      case 4:
+        minutosCuarto = partidoActual.minutosCuartoCuarto ?? 0
+        break
+      default:
+        minutosCuarto = partidoActual.minutosPrimerCuarto ?? 0
+    }
+  }
 
   return (
-    <Tablero>
-      <Fila>
-        <Equipo>
-          <Jugadores>
-            <Jugador>AAAAAA</Jugador>
-            <Jugador>AAAAAA</Jugador>
-          </Jugadores>
-          
-        </Equipo>
-          <Game>
-            
-          </Game>
-        
-      </Fila>
-      <Fila>
-        <Equipo>
-         <Jugadores>
-            <Jugador></Jugador>
-            <Jugador></Jugador>
-          </Jugadores>
-          
-        </Equipo>
-        
-          <Game>
-          
-        </Game>
-        
-      </Fila>
-    </Tablero>
+    <ContenedorPartido>
+      <FilaResultadoMovil>
+        <EscudoPartidoMovil>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoLocal?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoLocal?.nombreJugador1 || 'equipo local'}`}
+          />
+        </EscudoPartidoMovil>
+        <ContenedorTiempoCuartoMovil>
+          <Cuarto>{partidoActual.numeroCuarto || 1} C</Cuarto>
+          <Tiempo>{minutosCuarto}'</Tiempo>
+        </ContenedorTiempoCuartoMovil>
+        <EscudoPartidoMovil>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoVisitante?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoVisitante?.nombreJugador1 || 'equipo visitante'}`}
+          />
+        </EscudoPartidoMovil>
+      </FilaResultadoMovil>
+
+      <FilaResultado>
+        <EscudoPartido>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoLocal?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoLocal?.nombreJugador1 || 'equipo local'}`}
+          />
+        </EscudoPartido>
+        <EquipoLocal>{partidoActual.equipoLocal?.nombreJugador1 || 'equipo local'}</EquipoLocal>
+
+        <ContenedorTiempoResultado>
+          <ResultadoLocal>{partidoActual.golesEquipoLocal || 0}</ResultadoLocal>
+          <ContenedorTiempoCuarto>
+            <Cuarto>{partidoActual.numeroCuarto || 1} C</Cuarto>
+            <Tiempo>{minutosCuarto}'</Tiempo>
+          </ContenedorTiempoCuarto>
+          <Resultado>{partidoActual.golesEquipoVisitante || 0}</Resultado>
+        </ContenedorTiempoResultado>
+
+        <EquipoVisitante>{partidoActual.equipoVisitante?.nombreJugador1 || 'equipo local'}</EquipoVisitante>
+        <EscudoPartido>
+          <img
+            src={require(`../../Recursos/clubes/${partidoActual.equipoVisitante?.imagenEscudo || 'escudoDefecto.png'}`)}
+            alt={`Escudo ${partidoActual.equipoVisitante?.nombreJugador1 || 'equipo visitante'}`}
+          />
+        </EscudoPartido>
+      </FilaResultado>
+    </ContenedorPartido>
   )
 }
-
-const Tablero = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin: 100px 0;
-
-  @media (max-width: 768px) {
-    margin: 50px 0;
-  }
-
-  @media (max-width: 600px) {
-    margin: 40px 0;
-  }
-`
-
-const Fila = styled.div`
-  display: flex;
-  height: 170px;
-  width: 80%;
-
-  @media (max-width: 768px) {
-    height: 100px;
-    width: 85%;
-  }
-
-  @media (max-width: 600px) {
-    height: 70px;
-    width: 95%;
-  }
-`
-const Equipo = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border: 2px solid ${colorPrincipal}
-  background-color: #fff;
-  width: 47%;
-  padding: 20px;
-
-  @media (max-width: 768px) {
-    padding: 10px;
-    border: 1px solid ${colorPrincipal};
-  }
-
-  @media (max-width: 600px) {
-    padding: 5px;
-    border: 1px solid ${colorPrincipal};
-  }
-`
-
-const Jugadores = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-`
-
-const Jugador = styled.div`
-  color: ${colorPrincipal};
-  font-weight: bold;
-  font-family: Tahoma;
-  font-size: 38px;
-  line-height: 70px;
-
-  @media (max-width: 768px) {
-    font-size: 20px;
-    line-height: 25px;
-    margin: 5px 0;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 15px;
-    line-height: 20px;
-    margin: 5px 0;
-  }
-`
-
-const Game = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px solid #fff;
-  background-color: ${colorPrincipal};
-  width: 20%;
-  color: #fff;
-  font-family: Tahoma;
-  font-size: 90px;
-  line-height: 170px;
-
-  @media (max-width: 768px) {
-    font-size: 50px;
-    border: 1px solid #fff;
-  }
-
-  @media (max-width: 600px) {
-    font-size: 25px;
-    border: 1px solid #fff;
-  }
-`
 
 export default PartidoHockey

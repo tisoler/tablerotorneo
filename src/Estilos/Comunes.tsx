@@ -216,9 +216,11 @@ export const BotonMenuDerecha = styled(BotonMenu)`
 export const NoHayDatos = styled.div`
   display: flex;
   justify-content: center;
+  text-align: center;
   margin-top: 50px;
   color: #fff;
   font-size: 25px;
+  width: 100%;
 
   @media (max-width: 768px) {
     font-size: 20px;
@@ -347,7 +349,7 @@ export const Escudo = styled.div`
     height: 45px;
   }
 
-  @media (max-width: 768px) {\
+  @media (max-width: 768px) {
     height: 45px;
     width: 45px;
     right: 5px;
@@ -355,5 +357,228 @@ export const Escudo = styled.div`
     & img {
       height: 40px;
     }
+  }
+`
+
+// PARTIDO
+
+export const EscudoPartido = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 95px;
+  height: 95px;
+  background-color: #fff;
+  border-radius: 10%;
+
+  & img {
+    height: 75px;
+  }
+
+  @media (max-width: 768px) {\
+    display: none;
+  }
+`
+
+export const EscudoPartidoMovil = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 65px;
+  width: 65px;
+  background-color: #fff;
+
+  & img {
+    height: 55px;
+  }
+`
+
+
+export const ContenedorPartido = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 70%;
+  margin: 100px 0;
+
+  @media (max-width: 768px) {
+    margin: 50px 0;
+    width: 80%;
+  }
+
+  @media (max-width: 600px) {
+    margin: 40px 0;
+    width: 90%;
+  }
+`
+
+export const FilaResultado = styled.div`
+  display: flex;  
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+`
+
+export const FilaResultadoMovil = styled.div`
+  display: none;  
+  width: 100%;
+  justify-content: center;
+  align-items: center;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+`
+
+export const Equipo = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: ${colorPrincipal};
+  border-top: 1.5px solid #fff;
+  border-bottom: 1.5px solid #fff;
+  width: calc(37% - 95px);
+  height: 72px;
+  font-size: 25px;
+  font-weight: bold;
+  color: #fff;
+
+  @media (max-width: 768px) {
+    font-size: 21px;
+    width: calc(37%);
+    height: 55px;
+    border: 1.5px solid #fff;
+  }
+
+  @media (max-width: 600px) {
+    font-weight: normal;
+    font-size: 16px;
+  }
+`
+
+export const EquipoLocal = styled(Equipo)`
+  border-right: 1.5px solid #fff;
+`
+
+export const EquipoVisitante = styled(Equipo)`
+  border-left: 1.5px solid #fff;
+`
+
+export const ContenedorTiempoResultado = styled.div`
+  display: flex;
+  align-items:center;
+  width: calc(26% - 30px);
+  height: 100px;
+
+  @media (max-width: 768px) {
+    width: 26%;
+    padding: 5px 0;
+    height: 48px;
+    background-color: #fff;
+  }
+`
+
+export const ContenedorTiempoCuarto = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 40%;
+  height: 100%;
+  background-color: ${colorPrincipal};
+  border: 1.5px solid #fff;
+  padding: 5px 15px;
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`
+
+export const ContenedorTiempoCuartoMovil = styled.div`
+  display: none;
+  flex-direction: row;
+  justify-content: center;
+  width: 35%;
+  height: 53px;
+  background-color: ${colorPrincipal};
+  border: 1.5px solid #fff;
+  padding: 5px;
+  margin-bottom: -1px;
+
+  @media (max-width: 768px) {
+    display: flex;
+  }
+
+  @media (max-width: 600px) {
+    display: flex;
+  }
+`
+
+export const Cuarto = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  width: 100%;
+  height: 42%;
+  color: #fff;
+  font-size: 23px;
+  border-bottom: 1px solid #fff;
+
+  @media (max-width: 768px) {
+    font-size: 18px;
+    border-right: 1px solid #fff;
+    border-bottom: none;
+    height: 100%;
+    width: 38%;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 17px;
+  }
+`
+
+export const Tiempo = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  width: 100%;
+  height: 58%;
+  color: #fff;
+  font-size: 30px;
+
+  @media (max-width: 768px) {
+    font-size: 25px;
+    height: 100%;
+    width: 62%;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 22px;
+  }
+`
+
+export const Resultado = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  background-color: #fff;
+  height: 75px;
+  width: 30%;
+  font-size: 30px;
+  font-weight: bold;
+
+  @media (max-width: 768px) {
+    font-size: 25px;
+    height: 100%;
+    width: 50%;
+  }
+
+  @media (max-width: 600px) {
+    font-size: 22px;
+  }
+`
+
+export const ResultadoLocal = styled(Resultado)`
+  @media (max-width: 768px) {
+    border-right: 1px solid ${colorPrincipal};
   }
 `

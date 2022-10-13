@@ -11,7 +11,7 @@ import { ObtenerTorneoActual } from "../../Servicios/Torneo"
 import { NoHayDatos } from "../../Estilos/Comunes"
 
 const MenuInicio = () => {
-  const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>([])
+  const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>()
   const [disciplinaClub, setDisciplinaClub] = useState<DisciplinaClub>()
   const [torneoActual, setTorneoActual] = useState<Torneo | null>()
 
@@ -59,36 +59,33 @@ const MenuInicio = () => {
     }
   }
 
+  if (!disciplinasClubes) return <NoHayDatos>Cargando...</NoHayDatos>
+  if(!disciplinasClubes?.length) return <NoHayDatos>No hay clubes y/o disciplinas disponibles.</NoHayDatos>
+
   return (
     <>
       {Encabezado}
       <Contenedor>
-        {
-          !disciplinasClubes?.length
-            ? ( <NoHayDatos>No hay clubes y/o disciplinas disponibles.</NoHayDatos> )
-            : (
-              disciplinasClubes.map(disciplinaClub => (
-                <Boton
-                  key={disciplinaClub.id}
-                  onClick={() => { setTorneoActual(null); setDisciplinaClub(disciplinaClub) }}
-                  colorPrincipal={disciplinaClub.colorPrincipal}
-                  colorSecundario={disciplinaClub.colorSecundario}
-                >
-                  <ContenedorTexto>
-                    <TextoBoton>
-                      {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
-                    </TextoBoton>
-                    <TextoBoton>
-                      {`${disciplinaClub.nombreLocalidad}`}
-                    </TextoBoton>
-                  </ContenedorTexto>
-                  <Escudo>
-                    <img src={require(`../../Recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' />
-                  </Escudo>
-                </Boton>
-              ))
-            )
-        }
+        { disciplinasClubes.map(disciplinaClub => (
+            <Boton
+              key={disciplinaClub.id}
+              onClick={() => { setTorneoActual(null); setDisciplinaClub(disciplinaClub) }}
+              colorPrincipal={disciplinaClub.colorPrincipal}
+              colorSecundario={disciplinaClub.colorSecundario}
+            >
+              <ContenedorTexto>
+                <TextoBoton>
+                  {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
+                </TextoBoton>
+                <TextoBoton>
+                  {`${disciplinaClub.nombreLocalidad}`}
+                </TextoBoton>
+              </ContenedorTexto>
+              <Escudo>
+                <img src={require(`../../Recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' />
+              </Escudo>
+            </Boton>
+        ))}
       </Contenedor>
     </>
   )

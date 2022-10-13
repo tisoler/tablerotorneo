@@ -25,7 +25,7 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
   const renderPantalla = () => {
     switch(vista) {
       case 'partido':
-        return <Partido />
+        return <Partido idDisciplinaClub={idDisciplinaClub} />
       default:
         return <Torneo idDisciplinaClub={idDisciplinaClub} />
     }

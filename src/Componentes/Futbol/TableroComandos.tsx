@@ -43,7 +43,6 @@ const PARTIDO_ACTUAL_INICIAL: PartidoFutbol = {
   },
   golesEquipoLocal: 0,
   golesEquipoVisitante: 0,
-  fecha: new Date(),
   numeroTiempo: 1,
   idTorneoDisciplinaClub: -1,
 }
@@ -51,8 +50,8 @@ const PARTIDO_ACTUAL_INICIAL: PartidoFutbol = {
 const TableroComandos = () => {
   const [partidoActual, setPartidoActual] = useState<PartidoFutbol>(PARTIDO_ACTUAL_INICIAL)
   const [equipos, setEquipos] = useState<Equipo[]>([])
-  const [idEquipoLocal, setIdEquipoLocal] = useState<number>(1)
-  const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(1)
+  const [idEquipoLocal, setIdEquipoLocal] = useState<number>(21)
+  const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(21)
 
   const { token, limpiarAutenticacion } = useContextoGlobal()
 
@@ -82,7 +81,7 @@ const TableroComandos = () => {
 
   const crearPartido = async () => {
     const partidoActualActualizado = await CrearPartidoFutbolActual(
-      { id: partidoActual.id, idEquipoLocal, idEquipoVisitante },
+      { id: partidoActual.id, idEquipoLocal, idEquipoVisitante, inicioPrimerTiempo: new Date().toISOString().slice(0, 19).replace('T', ' ') },
       token,
       limpiarAutenticacion
     )
@@ -196,7 +195,16 @@ const TableroComandos = () => {
           />
           <Fila>
             <Titulo>Tiempo:</Titulo>
-            <Select value={partidoActual.numeroTiempo} onChange={(evt: any) => actualizarPartido({ numeroTiempo: evt?.target?.value || 1 })}>
+            <Select
+              value={partidoActual.numeroTiempo}
+              onChange={(evt: any) => {
+                let inicioTiempo
+                if (parseInt(evt?.target?.value) === 2) {
+                  inicioTiempo = { inicioSegundoTiempo: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+                }
+                actualizarPartido({ numeroTiempo: evt?.target?.value || 1, ...(inicioTiempo && inicioTiempo) })
+              }}
+            >
               <option key={1} value={1}>1</option>
               <option key={2} value={2}>2</option>
             </Select>

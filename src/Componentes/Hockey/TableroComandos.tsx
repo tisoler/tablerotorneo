@@ -43,16 +43,15 @@ const PARTIDO_ACTUAL_INICIAL: PartidoHockey = {
   },
   golesEquipoLocal: 0,
   golesEquipoVisitante: 0,
-  fecha: new Date(),
-  numeroTiempo: 1,
+  numeroCuarto: 1,
   idTorneoDisciplinaClub: -1,
 }
 
 const TableroComandos = () => {
   const [partidoActual, setPartidoActual] = useState<PartidoHockey>(PARTIDO_ACTUAL_INICIAL)
   const [equipos, setEquipos] = useState<Equipo[]>([])
-  const [idEquipoLocal, setIdEquipoLocal] = useState<number>(1)
-  const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(1)
+  const [idEquipoLocal, setIdEquipoLocal] = useState<number>(25)
+  const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(25)
 
   const { token, limpiarAutenticacion } = useContextoGlobal()
 
@@ -65,7 +64,7 @@ const TableroComandos = () => {
           ...partidoHockeyDB,
           golesEquipoLocal: partidoHockeyDB.golesEquipoLocal ?? 0,
           golesEquipoVisitante: partidoHockeyDB.golesEquipoVisitante ?? 0,
-          numeroTiempo: partidoHockeyDB.numeroTiempo ?? 1,
+          numeroCuarto: partidoHockeyDB.numeroCuarto ?? 1,
           idTorneoDisciplinaClub: partidoHockeyDB.idTorneoDisciplinaClub ?? -1,
         })
       }
@@ -82,7 +81,7 @@ const TableroComandos = () => {
 
   const crearPartido = async () => {
     const partidoActualActualizado = await CrearPartidoHockeyActual(
-      { id: partidoActual.id, idEquipoLocal, idEquipoVisitante },
+      { id: partidoActual.id, idEquipoLocal, idEquipoVisitante, inicioPrimerCuarto: new Date().toISOString().slice(0, 19).replace('T', ' ') },
       token,
       limpiarAutenticacion
     )
@@ -196,7 +195,25 @@ const TableroComandos = () => {
           />
           <Fila>
             <Titulo>Cuarto:</Titulo>
-            <Select value={partidoActual.numeroTiempo} onChange={(evt: any) => actualizarPartido({ numeroTiempo: evt?.target?.value || 1 })}>
+            <Select
+              value={partidoActual.numeroCuarto}
+              onChange={(evt: any) => {
+                let inicioCuarto
+                switch (parseInt(evt?.target?.value)) {
+                  case 2:
+                    inicioCuarto = { inicioSegundoCuarto: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+                    break
+                  case 3:
+                    inicioCuarto = { inicioTercerCuarto: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+                    break
+                  case 4:
+                    inicioCuarto = { inicioCuartoCuarto: new Date().toISOString().slice(0, 19).replace('T', ' ') }
+                    break
+                }
+
+                actualizarPartido({ numeroCuarto: evt?.target?.value || 1, ...(inicioCuarto && inicioCuarto) })
+              }}
+            >
               <option key={1} value={1}>1</option>
               <option key={2} value={2}>2</option>
               <option key={3} value={3}>3</option>
@@ -210,7 +227,7 @@ const TableroComandos = () => {
               {
                 golesEquipoLocal: 0,
                 golesEquipoVisitante: 0,
-                numeroTiempo: 1,
+                numeroCuarto: 1,
               }
             )}>Reiniciar</Boton>
             {partidoActual.id > 0 && 

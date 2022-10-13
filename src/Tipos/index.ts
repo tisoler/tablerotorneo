@@ -63,9 +63,12 @@ export interface PartidoFutbol {
   equipoVisitante: Equipo,
   golesEquipoLocal: number,
   golesEquipoVisitante: number,
-  fecha: Date,
+  inicioPrimerTiempo?: Date,
+  inicioSegundoTiempo?: Date,
   numeroTiempo: number,
   idTorneoDisciplinaClub: number,
+  minutosPrimerTiempo?: number,
+  minutosSegundoTiempo?: number,
 }
 
 export interface PartidoFutbolPayload {
@@ -74,7 +77,8 @@ export interface PartidoFutbolPayload {
   idEquipoVisitante?: number,
   golesEquipoLocal?: number | null,
   golesEquipoVisitante?: number | null,
-  fecha?: Date,
+  inicioPrimerTiempo?: string,
+  inicioSegundoTiempo?: string,
   numeroTiempo?: number | null,
   idTorneoDisciplinaClub?: number | null,
   activo?: number | null,
@@ -86,9 +90,16 @@ export interface PartidoHockey {
   equipoVisitante: Equipo,
   golesEquipoLocal: number,
   golesEquipoVisitante: number,
-  fecha: Date,
-  numeroTiempo: number,
+  inicioPrimerCuarto?: Date,
+  inicioSegundoCuarto?: Date,
+  inicioTercerCuarto?: Date,
+  inicioCuartoCuarto?: Date,
+  numeroCuarto: number,
   idTorneoDisciplinaClub: number,
+  minutosPrimerCuarto?: number,
+  minutosSegundoCuarto?: number,
+  minutosTercerCuarto?: number,
+  minutosCuartoCuarto?: number,
 }
 
 export interface PartidoHockeyPayload {
@@ -97,8 +108,11 @@ export interface PartidoHockeyPayload {
   idEquipoVisitante?: number,
   golesEquipoLocal?: number | null,
   golesEquipoVisitante?: number | null,
-  fecha?: Date,
-  numeroTiempo?: number | null,
+  inicioPrimerCuarto?: string,
+  inicioSegundoCuarto?: string,
+  inicioTercerCuarto?: string,
+  inicioCuartoCuarto?: string,
+  numeroCuarto?: number | null,
   idTorneoDisciplinaClub?: number | null,
   activo?: number | null,
 }

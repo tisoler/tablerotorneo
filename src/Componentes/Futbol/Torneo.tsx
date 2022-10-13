@@ -51,7 +51,7 @@ const Torneo = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
                 {`${equipo.posicion || 4}`}
               </DatoEquipo>
               <NombreClub ancho={70}>
-                <Escudo><img src={require(`../../Recursos/clubes/${equipo.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' /></Escudo>
+                <Escudo><img src={require(`../../Recursos/clubes/${equipo.imagenEscudo || 'escudoDefecto.png'}`)} alt={`Escudo ${equipo.nombreJugador1}`} /></Escudo>
                 <div>{equipo.nombreJugador1}</div>
               </NombreClub>
               <DatoEquipo ancho={22}>
