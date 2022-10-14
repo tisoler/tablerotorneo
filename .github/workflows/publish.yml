@@ -25,7 +25,7 @@ jobs:
       - name: Deployar
         uses: egnuez/github-actions-rsync@master
         with:
-          RSYNC_OPTIONS: -avzr --delete -O --no-perms
+          RSYNC_OPTIONS: -avzr  -O --no-perms
           RSYNC_TARGET: /tmp/build
           RSYNC_SOURCE: /build/
         env:
