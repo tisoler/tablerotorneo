@@ -1,8 +1,11 @@
 import styled from "styled-components"
 import { colorPrincipal } from "../../Estilos/Comunes"
+import FlechaAtras from "../../Recursos/comunes/flechaAtras"
 
 const BotonVolver = ({ onVolver }: { onVolver: () => void }) => (
-  <Boton onClick={onVolver} />
+  <Boton onClick={onVolver}>
+    <FlechaAtras ancho={40} alto={40} />
+  </Boton>
 )
 
 export default BotonVolver
@@ -21,19 +24,22 @@ const Boton = styled.div`
   cursor: pointer;
   line-height: 70px;
 
-  &:after {
-    content: '\\2190';
-    font-size: 2em;
+  & svg {
+    fill: #2E86C1;
   }
 
   &:hover {
     background-color: #2E86C1;
-    color: #fff;
+    & svg {
+      fill: #fff;
+    }
   }
 
   &:active {
     background-color: ${colorPrincipal};
-    color: ${colorPrincipal};
+    & svg {
+      fill: ${colorPrincipal};
+    }
   }
 
   @media (max-width: 768px) {
@@ -43,15 +49,16 @@ const Boton = styled.div`
     left: 1.3em;
     bottom: 1em;
     background-color: #2E86C1;
-    color: #fff;
+
+    & svg {
+      fill: #fff;
+    }
     
     &:active {
       background-color: #fff;
-      color: #2E86C1;
-    }
-
-    &:after {
-      font-size: 3em;
+      & svg {
+        fill: #2E86C1;
+      }
     }
   }
 `
