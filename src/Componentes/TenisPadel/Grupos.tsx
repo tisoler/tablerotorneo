@@ -3,10 +3,12 @@ import { useEffect } from 'react'
 import styled from 'styled-components'
 import { Equipo } from '../../Tipos'
 import { ObtenerEquipos } from '../../Servicios/Equipo'
+import { NoHayDatos } from '../../Estilos/Comunes'
 
 const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [grupos, setGrupos] = useState<string[]>([])
+  const [cargando, setCargando] = useState<boolean>(true)
 
   useEffect(() => {
     const obtenerGrupos = async () => {
@@ -20,6 +22,7 @@ const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
         }
         setGrupos(gruposDB)
       }
+      setCargando(false)
     }
     const intervalo = setInterval(obtenerGrupos, 60000) // Refresco de datos
     obtenerGrupos() // Carga inicial
@@ -53,6 +56,9 @@ const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
     return criterioA <= criterioB ? 1 : -1
   }
 
+  if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
+  if (!equipos?.length) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
+
   return (
     <Tablero>
       {grupos.map((grupo: string) =>
@@ -68,27 +74,31 @@ const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
             .filter((equipo: Equipo) => equipo.idGrupo === grupo)
             .sort(ordenarEquipos)
             .map((equipo: Equipo) => (
-              <EquipoConEstilo key={equipo.id}>
-                <PosicionPartidos ancho={7}>
-                  {`${equipo.posicion || 4}`}
-                </PosicionPartidos>
-                <Jugadores>
-                  <div>{equipo.nombreJugador1}</div>
-                  <div>{equipo.nombreJugador2}</div>
-                </Jugadores>
-                <PosicionPartidos>
-                  {`${equipo.partidosJugados || 0}`}
-                </PosicionPartidos>
-                <PosicionPartidos>
-                  {`${equipo.partidosGanados || 0}`}
-                </PosicionPartidos>
-                <PosicionPartidos>
-                  {`${equipo.diferenciaSets || 0}`}
-                </PosicionPartidos>
-                <PosicionPartidos>
-                  {`${equipo.diferenciaGames || 0}`}
-                </PosicionPartidos>
-              </EquipoConEstilo>
+              <FilaEquipo key={equipo.id}>
+                <div style={{ width: '7px' }}>&nbsp;</div>
+                <EquipoConEstilo>
+                  <PosicionPartidos ancho={7}>
+                    {`${equipo.posicion || 4}`}
+                  </PosicionPartidos>
+                  <Jugadores>
+                    <div>{equipo.nombreJugador1}</div>
+                    <div>{equipo.nombreJugador2}</div>
+                  </Jugadores>
+                  <PosicionPartidos>
+                    {`${equipo.partidosJugados || 0}`}
+                  </PosicionPartidos>
+                  <PosicionPartidos>
+                    {`${equipo.partidosGanados || 0}`}
+                  </PosicionPartidos>
+                  <PosicionPartidos>
+                    {`${equipo.diferenciaSets || 0}`}
+                  </PosicionPartidos>
+                  <PosicionPartidos>
+                    {`${equipo.diferenciaGames || 0}`}
+                  </PosicionPartidos>
+                </EquipoConEstilo>
+                <div style={{ width: '7px' }}>&nbsp;</div>
+              </FilaEquipo>
             ))
           }
         </Grupo>
@@ -119,18 +129,19 @@ const Grupo = styled.div`
   display: flex;
   flex-direction: column;
   height: 350px;
-  width: 24%;
-  border: 2px solid #fff;
-  margin: 20px 0;
+  width: 24.2%;
+  border-top: 2px solid #3d4b45;
+  margin: 10px 0;
+  background-color: #152b22;
 
   @media (max-width: 768px) {
     width: 100%;
-    border: 1px solid #fff;
+    border-top: 1px solid #3d4b45;
   }
 
   @media (max-width: 600px) {
     width: 100%;
-    border: 1px solid #fff;
+    border-top: 1px solid #3d4b45;
   }
 `
 
@@ -145,7 +156,7 @@ const NumeroGrupo = styled.div`
   width: 56%;
   height: 70px;
   font-size: 30px;
-  color: #fff;
+  color: #9aa0a6;
 
   @media (max-width: 768px) {
     font-size: 30px;
@@ -162,7 +173,7 @@ const PosicionPartidosEnc = styled.div<{ ancho?: number }>`
   align-items: center;
   text-align: center;
   width: ${props => props.ancho ?? 11}%;
-  color: #fff;
+  color: #9aa0a6;
   font-size: 22px;
 
   @media (max-width: 768px) {
@@ -190,26 +201,17 @@ const PosicionPartidos = styled.div<{ ancho?: number }>`
   }
 `
 
+const FilaEquipo = styled.div`
+  display: flex;
+  height: 25%;
+`
+
 const EquipoConEstilo = styled.div`
   display: flex;
   justify-content: center;
   width: 100%;
-  color: #000;
-  height: 25%;
-
-  background-color: #fff;
-  ${PosicionPartidos} {
-    border-left: 1px solid #ddd;
-    border-right: 1px solid #ddd;
-  }
-
-  :nth-child(even) {
-    background-color: #ddd;
-    ${PosicionPartidos} {
-      border-left: 1px solid #fff;
-      border-right: 1px solid #fff;
-    }
-  }
+  color: #bdc1c6;
+  border-top: 2px solid #3d4b45;
 `
 
 const Jugadores = styled.div`

@@ -1,5 +1,7 @@
 
 import styled from 'styled-components'
+import { colorPrincipal } from '../../Estilos/Comunes'
+import Logo from '../../Recursos/comunes/logo'
 
 interface EncabezadoProps {
   iniciales?: string,
@@ -25,14 +27,15 @@ const Encabezado = (props: EncabezadoProps) => {
         <Escudo imagenEscudo={imagenEscudo} />
       </Titulo>
       <Sponsor>
-        <LogoSponsorMovil>
-          <img
-            src={imagenSponsor ? require(`../../recursos/auspiciantes/${imagenSponsor}`) : require('../../recursos/comunes/logo.svg')}
-            alt={sponsor || 'No hay logo de sponsor'}
-          />
+        <LogoSponsorMovil colorFondoSponsor={colorFondoSponsor}>
+          {
+            imagenSponsor
+              ? <img src={require(`../../Recursos/auspiciantes/${imagenSponsor}`)} alt={sponsor || '¿Cómo va? Resultados online.'} />
+              : <ContenedorLogoGeneral><Logo /></ContenedorLogoGeneral>
+          }
         </LogoSponsorMovil>
         <Subtitulo colorFondoSponsor={colorFondoSponsor}>
-          {sponsor || 'Resultados online'}
+          {sponsor || '¿Cómo va...? Resultados online'}
         </Subtitulo>
         <LogoSponsorWeb imagenSponsor={imagenSponsor} />
       </Sponsor>
@@ -45,11 +48,11 @@ const EncabezadoDiv = styled.div`
   width: 100%;
   background-color: #fff;
   max-height: 100px;
-  height: 9%;
+  height: 80px;
 
   @media (max-width: 768px) {
     flex-direction: column;
-    height: 17%;
+    height: 100px;
   }
 `
 
@@ -59,6 +62,7 @@ const Titulo = styled.div`
   
   @media (max-width: 768px) {
     width 100%;
+    height: 70px;
   }
 `
 
@@ -72,7 +76,7 @@ const Iniciales = styled.div`
   width: 17.5%;
   font-family: Verdana;
   padding: 10px;
-  background-color: #215d43;
+  background-color: ${colorPrincipal};
   border-bottom: 1px solid #fff;
   font-weight: bold;
 
@@ -96,7 +100,7 @@ const Nombre = styled.div`
   align-items: center;
   font-size: 23px;
   text-align: center;
-  color: #215d43;
+  color: ${colorPrincipal};
   width: 50%;
   font-family: Verdana;
   padding: 10px 0 10px 30px;
@@ -113,7 +117,7 @@ const Nombre = styled.div`
   }
 
   @media (max-width: 600px) {
-    font-size: 15px;
+    font-size: 17px;
     width: 55%;
   }
 `
@@ -144,6 +148,7 @@ const Sponsor = styled.div`
 
   @media (max-width: 768px) {
     width: 100%;
+    height: 30px;
   }
 `
 
@@ -151,7 +156,7 @@ const Subtitulo = styled.div<{ colorFondoSponsor?: string }>`
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  font-size: 25px;
+  font-size: 22px;
   color: #fff;
   width: 83%;
   font-family: Verdana;
@@ -173,13 +178,12 @@ const Subtitulo = styled.div<{ colorFondoSponsor?: string }>`
     font-size: 22px;
     margin: 0;
     justify-content: flex-start;
-    padding: 10px 0;
+    padding: 10px 5px;
   }
 
   @media (max-width: 600px) {
     font-size: 17px;
     width: 84%;
-    margin: 0;
   }
 
   @media (max-width: 500px) {
@@ -191,10 +195,10 @@ const Subtitulo = styled.div<{ colorFondoSponsor?: string }>`
   }
 `
 
-const LogoSponsorMovil = styled.div`
+const LogoSponsorMovil = styled.div<{ colorFondoSponsor?: string }>`
   width: 13%;
   height: 50px;
-  background-color: #7F1833;
+  background-color: ${props => props.colorFondoSponsor ?? '#2E86C1'};;
   display: none;
   padding-left: 0.7rem;
 
@@ -245,6 +249,18 @@ const LogoSponsorWeb = styled.div<{ imagenSponsor?: string }>`
   @media (max-width: 768px) {
     display: none;
   }
+`
+
+const ContenedorLogoGeneral = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  width: 60px;
+  width: 60px;
+  border-radius: 50%;
+  margin: -7.5px 0;
+  padding: 0 3.75px;
 `
 
 export default Encabezado

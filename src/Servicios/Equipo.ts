@@ -1,4 +1,4 @@
-import { Equipo } from "../Tipos"
+import { Equipo, EquipoPayload } from "../Tipos"
 
 const { REACT_APP_BACKEND_URL } = process.env
 
@@ -36,13 +36,7 @@ export const ObtenerEquipos = async (idDisciplinaClub: number): Promise<Equipo[]
 
 export const ActualizarEquipo = async (
   idEquipo: number,
-  payload: {
-    posicion?: number,
-    partidosJugados?: number,
-    partidosGanados?: number,
-    diferenciaSets?: number,
-    diferenciaGames?: number
-  },
+  payload: EquipoPayload,
   token: string,
   limpiarAutenticacion: () => void,
 ): Promise<Equipo[] | null> => {

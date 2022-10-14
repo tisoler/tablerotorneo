@@ -8,9 +8,10 @@ import TableroUsuarioHockey from "../Hockey/TableroUsuario"
 import EncabezadoGeneral from './Encabezado'
 import EncabezadoPersonalizado from './EncabezadoPersonalizado'
 import { ObtenerTorneoActual } from "../../Servicios/Torneo"
+import { NoHayDatos } from "../../Estilos/Comunes"
 
 const MenuInicio = () => {
-  const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>([])
+  const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>()
   const [disciplinaClub, setDisciplinaClub] = useState<DisciplinaClub>()
   const [torneoActual, setTorneoActual] = useState<Torneo | null>()
 
@@ -58,36 +59,33 @@ const MenuInicio = () => {
     }
   }
 
+  if (!disciplinasClubes) return <NoHayDatos>Cargando...</NoHayDatos>
+  if(!disciplinasClubes?.length) return <NoHayDatos>No hay clubes y/o disciplinas disponibles.</NoHayDatos>
+
   return (
     <>
       {Encabezado}
       <Contenedor>
-        {
-          !disciplinasClubes?.length
-            ? ( <>No hay clubes y/o disciplinas disponibles.</> )
-            : (
-              disciplinasClubes.map(disciplinaClub => (
-                <Boton
-                  key={disciplinaClub.id}
-                  onClick={() => { setTorneoActual(null); setDisciplinaClub(disciplinaClub) }}
-                  colorPrincipal={disciplinaClub.colorPrincipal}
-                  colorSecundario={disciplinaClub.colorSecundario}
-                >
-                  <ContenedorTexto>
-                    <TextoBoton>
-                      {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
-                    </TextoBoton>
-                    <TextoBoton>
-                      {`${disciplinaClub.nombreLocalidad}`}
-                    </TextoBoton>
-                  </ContenedorTexto>
-                  <Escudo>
-                    <img src={require(`../../recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Logo Que placer que vino' />
-                  </Escudo>
-                </Boton>
-              ))
-            )
-        }
+        { disciplinasClubes.map(disciplinaClub => (
+            <Boton
+              key={disciplinaClub.id}
+              onClick={() => { setTorneoActual(null); setDisciplinaClub(disciplinaClub) }}
+              colorPrincipal={disciplinaClub.colorPrincipal}
+              colorSecundario={disciplinaClub.colorSecundario}
+            >
+              <ContenedorTexto>
+                <TextoBoton>
+                  {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
+                </TextoBoton>
+                <TextoBoton>
+                  {`${disciplinaClub.nombreLocalidad}`}
+                </TextoBoton>
+              </ContenedorTexto>
+              <Escudo>
+                <img src={require(`../../Recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' />
+              </Escudo>
+            </Boton>
+        ))}
       </Contenedor>
     </>
   )
@@ -144,17 +142,28 @@ const Boton = styled.div<{ colorPrincipal?: string, colorSecundario?: string }>`
   @media (max-width: 768px) {
     font-size: 18px;
     height: 50px;
-    width: calc(60% - 2.5px);
+    width: calc(60% - 4px);
     border-left: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
     border-top: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
     border-bottom: solid 1.5px ${props => props.colorPrincipal || '#ddd'};
     border-right: solid 3.5px ${props => props.colorSecundario || '#ddd'};
+
+    &:hover {
+      background-color: ${props => props.colorPrincipal || '#fff'};
+      border: solid 1.5px ${props => props.colorSecundario || '#fff'};
+      color: ${props => props.colorSecundario ? '#fff' : '#000'};
+      width: calc(60% - 4px);
+    }
   }
 
   @media (max-width: 600px) {
     font-size: 16px;
     height: 45px;
     width: calc(85% - 2.5px);
+
+    &:hover {
+      width: calc(85% - 2.5px);
+    }
   }
 `
 

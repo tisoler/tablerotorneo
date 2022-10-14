@@ -1,6 +1,6 @@
 
 import styled from 'styled-components'
-import Logo from '../../recursos/comunes/logo'
+import Logo from '../../Recursos/comunes/logo'
 
 const Encabezado = () => {
   
@@ -28,10 +28,10 @@ const EncabezadoDiv = styled.div`
   width: 100%;
   background-color: #fff;
   max-height: 100px;
-  height: 9%;
+  height: 80px;
 
   @media (max-width: 768px) {
-    height: 20%;
+    height: 52px;
   }
 `
 
@@ -47,15 +47,15 @@ const ContenedorLogo = styled.div`
   justify-content: flex-end;
   font-size: 40px;
   text-align: center;
-  width: 90px;
-  height: 95px;
+  width: 87px;
+  height: 92px;
   font-family: Verdana;
   padding: 10px;
   font-weight: bold;
   border-radius: 50%;
   background-color: #2E86C1;
-  margin-top: -20px;
-  margin-left: -20px;
+  margin-top: -15px;
+  margin-left: -18px;
   padding-right: 20px;
 
   @media (max-width: 768px) {
