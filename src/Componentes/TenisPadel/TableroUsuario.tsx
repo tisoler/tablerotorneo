@@ -28,7 +28,7 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
       case 'partido':
         return <Partido />
       case 'cuadro':
-        return <Cuadro />
+        return <Cuadro idDisciplinaClub={idDisciplinaClub} />
       default:
         return <Grupos idDisciplinaClub={idDisciplinaClub} />
     }

@@ -31,7 +31,7 @@ const Tablero = () => {
       case 'partido':
         return <Partido />
       case 'cuadro':
-        return <Cuadro />
+        return <Cuadro idDisciplinaClub={1} />
       default:
         return <Grupos idDisciplinaClub={1} />
     }

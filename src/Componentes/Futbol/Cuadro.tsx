@@ -11,13 +11,13 @@ const Cuadro = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
   const { innerWidth: width } = window;
 
   useEffect(() => {
-    const obtenerCuadroFinal = async () => {
+    const obtenerCuadroFinalActual = async () => {
       const cuadroFinalDB = await ObtenerCuadroFinalActual(idDisciplinaClub)
       setCuadroFinal(cuadroFinalDB)
       setCargando(false)
     }
-    const intervalo = setInterval(obtenerCuadroFinal, 60000) // Refresco de datos
-    obtenerCuadroFinal() // Carga inicial
+    const intervalo = setInterval(obtenerCuadroFinalActual, 60000) // Refresco de datos
+    obtenerCuadroFinalActual() // Carga inicial
 
     return () => { if (intervalo) clearInterval(intervalo) }
   }, [])
@@ -35,22 +35,22 @@ const Cuadro = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
                 <BloqueVacio>4tos de final</BloqueVacio>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipo>
-                  <Jugador>{cuadroFinal.cuartosABEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosABEquipo1?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosABEquipo1?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipo>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipoGris>
-                  <Jugador>{cuadroFinal.cuartosABEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosABEquipo2?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosABEquipo2?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipoGris>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipo>
-                  <Jugador>{cuadroFinal.cuartosCDEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosCDEquipo1?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosCDEquipo1?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipo>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipoGris>
-                  <Jugador>{cuadroFinal.cuartosCDEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosCDEquipo2?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosCDEquipo2?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipoGris>
                 <BloqueVacio>&nbsp;</BloqueVacio>
@@ -130,22 +130,22 @@ const Cuadro = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
                 <BloqueVacio></BloqueVacio>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipo>
-                  <Jugador>{cuadroFinal.cuartosEFEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosEFEquipo1?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosEFEquipo1?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipo>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipoGris>
-                  <Jugador>{cuadroFinal.cuartosEFEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosEFEquipo2?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosEFEquipo2?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipoGris>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipo>
-                  <Jugador>{cuadroFinal.cuartosGHEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosGHEquipo1?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosGHEquipo1?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipo>
                 <BloqueVacio>&nbsp;</BloqueVacio>
                 <BloqueEquipoGris>
-                  <Jugador>{cuadroFinal.cuartosGHEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                  <Jugador>{cuadroFinal.cuartosGHEquipo2?.nombreJugador1 || ''}</Jugador>
                   <Jugador>{cuadroFinal.cuartosGHEquipo2?.nombreJugador2 || ''}</Jugador>
                 </BloqueEquipoGris>
                 <BloqueVacio>&nbsp;</BloqueVacio>
@@ -207,22 +207,22 @@ const Cuadro = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
               <BloqueVacio>4tos de final</BloqueVacio>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipo>
-                <Jugador>{cuadroFinal.cuartosABEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosABEquipo1?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosABEquipo1?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipo>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipoGris>
-                <Jugador>{cuadroFinal.cuartosABEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosABEquipo2?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosABEquipo2?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipoGris>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipo>
-                <Jugador>{cuadroFinal.cuartosCDEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosCDEquipo1?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosCDEquipo1?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipo>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipoGris>
-                <Jugador>{cuadroFinal.cuartosCDEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosCDEquipo2?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosCDEquipo2?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipoGris>
               <BloqueVacio>&nbsp;</BloqueVacio>
@@ -343,22 +343,22 @@ const Cuadro = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
               <BloqueVacio>4tos de final</BloqueVacio>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipoGris>
-                <Jugador>{cuadroFinal.cuartosEFEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosEFEquipo1?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosEFEquipo1?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipoGris>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipo>
-                <Jugador>{cuadroFinal.cuartosEFEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosEFEquipo2?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosEFEquipo2?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipo>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipoGris>
-                <Jugador>{cuadroFinal.cuartosGHEquipo1?.nombreJugador1 || 'Primero de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosGHEquipo1?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosGHEquipo1?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipoGris>
               <BloqueVacio>&nbsp;</BloqueVacio>
               <BloqueEquipo>
-                <Jugador>{cuadroFinal.cuartosGHEquipo2?.nombreJugador1 || 'Segundo de grupo'}</Jugador>
+                <Jugador>{cuadroFinal.cuartosGHEquipo2?.nombreJugador1 || ''}</Jugador>
                 <Jugador>{cuadroFinal.cuartosGHEquipo2?.nombreJugador2 || ''}</Jugador>
               </BloqueEquipo>
               <BloqueVacio>&nbsp;</BloqueVacio>

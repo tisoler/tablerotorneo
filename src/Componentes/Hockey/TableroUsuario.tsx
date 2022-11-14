@@ -4,7 +4,8 @@ import Torneo from './Torneo'
 import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
 import BotonVolver from "../Comunes/BotonVolver"
 import { PantallaMostrar } from "../../Tipos"
-import { BotonMenuDerecha, BotonMenuIzquierda, ContenedorTableroUsuario, EncabezadoPantalla, Menu } from "../../Estilos/Comunes"
+import { BotonMenu, BotonMenuDerecha, BotonMenuIzquierda, ContenedorTableroUsuario, EncabezadoPantalla, Menu } from "../../Estilos/Comunes"
+import Cuadro from "./Cuadro"
 
 interface TableroUsuarioProps {
   idDisciplinaClub: number,
@@ -26,6 +27,8 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
     switch(vista) {
       case 'partido':
         return <Partido idDisciplinaClub={idDisciplinaClub} />
+      case 'cuadro':
+        return <Cuadro idDisciplinaClub={idDisciplinaClub} />
       default:
         return <Torneo idDisciplinaClub={idDisciplinaClub} />
     }
@@ -37,7 +40,8 @@ const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => 
         <BotonVolver onVolver={onVolver} />
         <Menu>
           <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
-          <BotonMenuDerecha seleccionado={vista === 'torneo'}  onClick={() => setVista('torneo')}>Torneo</BotonMenuDerecha>
+          <BotonMenu seleccionado={vista === 'torneo'}  onClick={() => setVista('torneo')}>Torneo</BotonMenu>
+          <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro</BotonMenuDerecha>
         </Menu>
       </EncabezadoPantalla>
       { vista && renderPantalla() }

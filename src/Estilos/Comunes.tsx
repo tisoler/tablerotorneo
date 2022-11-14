@@ -134,6 +134,34 @@ export const ContenedorGrupos = styled.div`
   padding: 20px 10px;
 `
 
+// 60 px de heigh por defecto como el Select
+export const EquipoCuadro = styled.div<{ alto?: number }>`
+  display: flex;
+  align-items: center;
+  border: 1px solid #fff;
+  height: ${props => props.alto ?? 60}px;
+`
+
+export const ContenedorCuadro = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  margin: 20px 10px;
+`
+
+export const TableroCuadro = styled.div`
+  display: flex;
+  width: 100%;
+`
+
+export const ColumnaCuadroFinal = styled.div`
+  display: flex;
+  flex-direction: column;
+  width: 25%;
+  color: #fff;
+`
+
 //--- TABLERO USUARIO ---//
 
 export const ContenedorTableroUsuario = styled.div`

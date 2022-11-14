@@ -18,9 +18,13 @@ import {
   Titulo,
   TituloGrande,
   Set,
+  EquipoCuadro,
+  ContenedorCuadro,
+  TableroCuadro,
+  ColumnaCuadroFinal,
 } from '../../Estilos/Comunes'
 import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
-import { ActualizarCuadroFinal, ObtenerCuadroFinal } from '../../Servicios/CuadroFinal'
+import { ActualizarCuadroFinalParaUsuarioLogueado, ObtenerCuadroFinalParaUsuarioLogueado } from '../../Servicios/CuadroFinal'
 import { ActualizarEquipo, ObtenerEquiposParaUsuarioLogueado } from '../../Servicios/Equipo'
 import { ActualizarGame, ActualizarPartidoActual, ObtenerPartidoActual } from '../../Servicios/PartidoActual'
 import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoActual, PartidoActualPayload } from '../../Tipos'
@@ -98,7 +102,7 @@ const TableroComandos = () => {
       }
 
       // CUADRO FINAL
-      const cuadroFinal = await ObtenerCuadroFinal()
+      const cuadroFinal = await ObtenerCuadroFinalParaUsuarioLogueado(token)
       if (cuadroFinal) {
         setCuadroFinal(cuadroFinal)
       }
@@ -118,7 +122,7 @@ const TableroComandos = () => {
   }
 
   const actualizarCuadroFinal = async (payload: CuadroFinalPayload) => {
-    const cuadroFinalActualizado = await ActualizarCuadroFinal(payload, token, limpiarAutenticacion)
+    const cuadroFinalActualizado = await ActualizarCuadroFinalParaUsuarioLogueado(payload, token, limpiarAutenticacion)
     if (cuadroFinalActualizado) setCuadroFinal(cuadroFinalActualizado)
   }
 
@@ -460,21 +464,21 @@ const TableroComandos = () => {
         <TableroCuadro>
           <ColumnaCuadroFinal>
             <>Cuartos</>
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosAEquipo1' idEquipoInstancia={cuadroFinal?.cuartosAEquipo1?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosAEquipo2' idEquipoInstancia={cuadroFinal?.cuartosAEquipo2?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosBEquipo1' idEquipoInstancia={cuadroFinal?.cuartosBEquipo1?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosBEquipo2' idEquipoInstancia={cuadroFinal?.cuartosBEquipo2?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosCEquipo1' idEquipoInstancia={cuadroFinal?.cuartosCEquipo1?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosCEquipo2' idEquipoInstancia={cuadroFinal?.cuartosCEquipo2?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosDEquipo1' idEquipoInstancia={cuadroFinal?.cuartosDEquipo1?.id} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosDEquipo2' idEquipoInstancia={cuadroFinal?.cuartosDEquipo2?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosABEquipo1' idEquipoInstancia={cuadroFinal?.cuartosABEquipo1?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosABEquipo2' idEquipoInstancia={cuadroFinal?.cuartosABEquipo2?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosCDEquipo1' idEquipoInstancia={cuadroFinal?.cuartosCDEquipo1?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosCDEquipo2' idEquipoInstancia={cuadroFinal?.cuartosCDEquipo2?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosEFEquipo1' idEquipoInstancia={cuadroFinal?.cuartosEFEquipo1?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosEFEquipo2' idEquipoInstancia={cuadroFinal?.cuartosEFEquipo2?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosGHEquipo1' idEquipoInstancia={cuadroFinal?.cuartosGHEquipo1?.id} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='cuartosGHEquipo2' idEquipoInstancia={cuadroFinal?.cuartosGHEquipo2?.id} />
           </ColumnaCuadroFinal>
           <ColumnaCuadroFinal>
             <>Semis</>
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinalAEquipo1' idEquipoInstancia={cuadroFinal?.semifinalAEquipo1?.id} alto={122} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinalAEquipo2' idEquipoInstancia={cuadroFinal?.semifinalAEquipo2?.id} alto={122} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinalBEquipo1' idEquipoInstancia={cuadroFinal?.semifinalBEquipo1?.id} alto={122} />
-            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinalBEquipo2' idEquipoInstancia={cuadroFinal?.semifinalBEquipo2?.id} alto={122} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinal1Equipo1' idEquipoInstancia={cuadroFinal?.semifinal1Equipo1?.id} alto={122} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinal1Equipo2' idEquipoInstancia={cuadroFinal?.semifinal1Equipo2?.id} alto={122} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinal2Equipo1' idEquipoInstancia={cuadroFinal?.semifinal2Equipo1?.id} alto={122} />
+            <EquipoCuadroFinal equipoInstanciaEtiqueta='semifinal2Equipo2' idEquipoInstancia={cuadroFinal?.semifinal2Equipo2?.id} alto={122} />
           </ColumnaCuadroFinal>
           <ColumnaCuadroFinal>
             <>Final</>
@@ -604,34 +608,6 @@ const Jugadores = styled.div`
   width: calc(35% - 10px);
   padding: 10px 5px;
   font-weight: bold;
-`
-
-const ContenedorCuadro = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 100%;
-  margin: 20px 10px;
-`
-
-const TableroCuadro = styled.div`
-  display: flex;
-  width: 100%;
-`
-
-const ColumnaCuadroFinal = styled.div`
-  display: flex;
-  flex-direction: column;
-  width: 25%;
-  color: #fff;
-`
-
-// 60 px de heigh por defecto como el Select
-const EquipoCuadro = styled.div<{ alto?: number }>`
-  display: flex;
-  align-items: center;
-  border: 1px solid #fff;
-  height: ${props => props.alto ?? 60}px;
 `
 
 export default TableroComandos
