@@ -83,7 +83,7 @@ const FondoListaTorneos = styled.div<{ mostrar: boolean }>`
   display: ${props => props.mostrar ? 'flex' : 'none'};
   align-items: center;
   justify-content: center;
-  position: absolute;
+  position: fixed;
   top: 0;
   left: 0;
   height: 100%;
