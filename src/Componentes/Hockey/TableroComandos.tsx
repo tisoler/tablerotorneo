@@ -50,14 +50,15 @@ const PARTIDO_ACTUAL_INICIAL: PartidoHockey = {
   golesEquipoVisitante: 0,
   numeroCuarto: 1,
   idTorneoDisciplinaClub: -1,
+  activo: true,
 }
 
 const TableroComandos = () => {
   const [partidoActual, setPartidoActual] = useState<PartidoHockey>(PARTIDO_ACTUAL_INICIAL)
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal>()
-  const [idEquipoLocal, setIdEquipoLocal] = useState<number>(25)
-  const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(25)
+  const [idEquipoLocal, setIdEquipoLocal] = useState<number>(-1)
+  const [idEquipoVisitante, setIdEquipoVisitante] = useState<number>(-1)
 
   const { token, limpiarAutenticacion } = useContextoGlobal()
 
@@ -93,7 +94,12 @@ const TableroComandos = () => {
 
   const crearPartido = async () => {
     const partidoActualActualizado = await CrearPartidoHockeyActual(
-      { id: partidoActual.id, idEquipoLocal, idEquipoVisitante, inicioPrimerCuarto: new Date().toISOString().slice(0, 19).replace('T', ' ') },
+      {
+        id: partidoActual.id,
+        idEquipoLocal: idEquipoLocal > -1 ? idEquipoLocal : equipos[0].id,
+        idEquipoVisitante: idEquipoVisitante > -1 ? idEquipoVisitante : equipos[0].id,
+        inicioPrimerCuarto: new Date().toISOString().slice(0, 19).replace('T', ' ')
+      },
       token,
       limpiarAutenticacion
     )

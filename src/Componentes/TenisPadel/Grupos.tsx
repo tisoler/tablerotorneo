@@ -4,15 +4,21 @@ import styled from 'styled-components'
 import { Equipo } from '../../Tipos'
 import { ObtenerEquipos } from '../../Servicios/Equipo'
 import { NoHayDatos } from '../../Estilos/Comunes'
+import { useContextoGlobal } from '../../Contexto/contextoGlobal'
 
-const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
+const Grupos = () => {
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [grupos, setGrupos] = useState<string[]>([])
   const [cargando, setCargando] = useState<boolean>(true)
 
+  const { torneoSeleccionado } = useContextoGlobal()
+
   useEffect(() => {
+    setCargando(true)
+
     const obtenerGrupos = async () => {
-      const equipos = await ObtenerEquipos(idDisciplinaClub)
+      if (!torneoSeleccionado?.id) return
+      const equipos = await ObtenerEquipos(torneoSeleccionado.id)
       if (equipos?.length) {
         setEquipos(equipos)
         let gruposDB: string[] = []
@@ -21,14 +27,21 @@ const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
           if (idGrupo !== '?' && !gruposDB.includes(idGrupo)) gruposDB.push(idGrupo)
         }
         setGrupos(gruposDB)
+      } else {
+        setEquipos([])
+        setGrupos([])
       }
       setCargando(false)
     }
-    const intervalo = setInterval(obtenerGrupos, 60000) // Refresco de datos
+
     obtenerGrupos() // Carga inicial
 
-    return () => { if (intervalo) clearInterval(intervalo) }
-  }, [])
+    // Configurar intervalo para refrescar datos solamente si es el torneo actual
+    if (torneoSeleccionado?.activo) {
+      const intervalo = setInterval(obtenerGrupos, 60000) // Refresco de datos
+      return () => { if (intervalo) clearInterval(intervalo) }
+    }
+  }, [torneoSeleccionado])
 
   const ordenarEquipos = (a: Equipo, b: Equipo) => {
     let criterioA = a.posicion || 4
@@ -57,7 +70,7 @@ const Grupos = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
   }
 
   if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
-  if (!equipos?.length) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
+  if (!equipos?.length) return <NoHayDatos>No hay información sobre el torneo.</NoHayDatos>
 
   return (
     <Tablero>

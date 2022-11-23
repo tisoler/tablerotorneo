@@ -1,17 +1,30 @@
 import { useState, createContext, useContext } from "react"
+import { DisciplinaClub, Torneo } from "../Tipos"
 
 interface ContextoGlobalProp {
   token: string,
   idDisciplina: number,
+  disciplinaClub: DisciplinaClub | null,
+  torneos: Torneo[] | null,
+  torneoSeleccionado: Torneo | null,
   guardarAutenticacion: (token: string, idDisciplina: number) => void,
   limpiarAutenticacion: () => void,
+  setDisciplinaClub: (id: DisciplinaClub | null) => void,
+  setTorneos: (torneos: Torneo[]) => void,
+  setTorneoSeleccionado: (torneos: Torneo | null) => void,
 }
 
 const ContextoGlobal = createContext<ContextoGlobalProp>({
   token: '',
   idDisciplina: -1,
+  disciplinaClub: null,
+  torneos: [],
+  torneoSeleccionado: null,
   guardarAutenticacion: (token: string, idDisciplina: number) => {},
   limpiarAutenticacion: () => {},
+  setDisciplinaClub: (id: DisciplinaClub | null) => {},
+  setTorneos: (torneos: Torneo[]) => {},
+  setTorneoSeleccionado: (torneos: Torneo | null) => {},
 })
 
 export const useContextoGlobal = () => (useContext(ContextoGlobal))
@@ -44,6 +57,9 @@ export const limpiarDisciplinaClubEnCache = () => {
 export const ProveedorGlobal = (props: { children: React.ReactNode }) => {
   const [token, setToken] = useState<string>(obtenerTokenDeCache())
   const [idDisciplina, setIdDisciplina] = useState<number>(obtenerDisciplinaClubDeCache())
+  const [disciplinaClub, setDisciplinaClub] = useState<DisciplinaClub | null>(null)
+  const [torneos, setTorneos] = useState<Torneo[]>([])
+  const [torneoSeleccionado, setTorneoSeleccionado] = useState<Torneo | null>(null)
 
   const guardarAutenticacion = (token: string, idDisciplina: number) => {
     setToken(token)
@@ -62,7 +78,20 @@ export const ProveedorGlobal = (props: { children: React.ReactNode }) => {
   }
 
   return (
-    <ContextoGlobal.Provider value={{ token, idDisciplina, guardarAutenticacion, limpiarAutenticacion }}>
+    <ContextoGlobal.Provider
+      value={{
+        token,
+        idDisciplina,
+        disciplinaClub,
+        torneos,
+        torneoSeleccionado,
+        guardarAutenticacion,
+        limpiarAutenticacion,
+        setDisciplinaClub,
+        setTorneos,
+        setTorneoSeleccionado,
+      }}
+    >
       { props.children }
     </ContextoGlobal.Provider>
   )

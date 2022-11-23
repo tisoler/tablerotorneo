@@ -6,31 +6,34 @@ import BotonVolver from "../Comunes/BotonVolver"
 import { PantallaMostrar } from "../../Tipos"
 import { BotonMenu, BotonMenuDerecha, BotonMenuIzquierda, ContenedorTableroUsuario, EncabezadoPantalla, Menu } from "../../Estilos/Comunes"
 import Cuadro from "./Cuadro"
+import { useContextoGlobal } from "../../Contexto/contextoGlobal"
 
 interface TableroUsuarioProps {
-  idDisciplinaClub: number,
   onVolver: () => void,
 }
 
-const TableroUsuario = ({ idDisciplinaClub, onVolver }: TableroUsuarioProps) => {
+const TableroUsuario = ({ onVolver }: TableroUsuarioProps) => {
   const [vista, setVista] = useState<PantallaMostrar>()
+
+  const { disciplinaClub } = useContextoGlobal()
 
   useEffect(() => {
     const obtenerConfiguracion = async () => {
-      const configuracionInicial = await ObtenerConfiguracion(idDisciplinaClub)
+      if (!disciplinaClub) return
+      const configuracionInicial = await ObtenerConfiguracion(disciplinaClub.id)
       setVista(configuracionInicial?.pantallaMostrar ?? 'torneo')
     }
     obtenerConfiguracion()
-  }, [])
+  }, [disciplinaClub])
 
   const renderPantalla = () => {
     switch(vista) {
       case 'partido':
-        return <Partido idDisciplinaClub={idDisciplinaClub} />
+        return <Partido />
       case 'cuadro':
-        return <Cuadro idDisciplinaClub={idDisciplinaClub} />
+        return <Cuadro />
       default:
-        return <Torneo idDisciplinaClub={idDisciplinaClub} />
+        return <Torneo />
     }
   }
 

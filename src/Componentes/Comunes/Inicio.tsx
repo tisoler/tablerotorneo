@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react"
 import styled from 'styled-components'
 import { ObtenerDisciplinasClubes } from "../../Servicios/DisciplinaClub"
-import { DisciplinaClub, Torneo } from "../../Tipos"
+import { DisciplinaClub } from "../../Tipos"
 import TableroUsuarioPadelTenis from "../TenisPadel/TableroUsuario"
 import TableroUsuarioFutbol from "../Futbol/TableroUsuario"
 import TableroUsuarioHockey from "../Hockey/TableroUsuario"
 import EncabezadoGeneral from './Encabezado'
 import EncabezadoPersonalizado from './EncabezadoPersonalizado'
-import { ObtenerTorneoActual } from "../../Servicios/Torneo"
+import { ObtenerTorneoActual, ObtenerTorneos } from "../../Servicios/Torneo"
 import { NoHayDatos } from "../../Estilos/Comunes"
+import { useContextoGlobal } from "../../Contexto/contextoGlobal"
 
 const MenuInicio = () => {
   const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>()
-  const [disciplinaClub, setDisciplinaClub] = useState<DisciplinaClub>()
-  const [torneoActual, setTorneoActual] = useState<Torneo | null>()
+
+  const { setDisciplinaClub, disciplinaClub, setTorneos, setTorneoSeleccionado, torneoSeleccionado } = useContextoGlobal()
 
   useEffect(() => {
     const obtenerDisciplinasClubes = async () => {
@@ -25,27 +26,35 @@ const MenuInicio = () => {
 
   useEffect(() => {
     const obtenerDatosTorneoActual = async () => {
-      if (!disciplinaClub?.id) return null
+      if (torneoSeleccionado || !disciplinaClub?.id) return null
       const torneoActualBD = await ObtenerTorneoActual(disciplinaClub.id)
-      if (torneoActualBD) setTorneoActual(torneoActualBD)
+      if (torneoActualBD) setTorneoSeleccionado(torneoActualBD)
     }
+
+    const obtenerDatosTorneos = async () => {
+      if (!disciplinaClub?.id) return null
+      const torneosBD = await ObtenerTorneos(disciplinaClub.id)
+      if (torneosBD) setTorneos(torneosBD)
+    }
+
     obtenerDatosTorneoActual()
+    obtenerDatosTorneos()
   }, [disciplinaClub])
 
   let Encabezado = <EncabezadoGeneral />
   let VistaTableroUsuario
   if (disciplinaClub) {
-    Encabezado = torneoActual?.nombreMostrar ? <EncabezadoPersonalizado {...torneoActual} /> : <EncabezadoGeneral />
+    Encabezado = torneoSeleccionado?.nombreMostrar ? <EncabezadoPersonalizado {...torneoSeleccionado} /> : <EncabezadoGeneral />
     switch (disciplinaClub.idDisciplina) {
       case 1:
       case 2:
-        VistaTableroUsuario = <TableroUsuarioPadelTenis idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        VistaTableroUsuario = <TableroUsuarioPadelTenis onVolver={() => setDisciplinaClub(null)} />
         break
       case 4:
-        VistaTableroUsuario = <TableroUsuarioFutbol idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        VistaTableroUsuario = <TableroUsuarioFutbol onVolver={() => setDisciplinaClub(null)} />
         break
       case 5:
-        VistaTableroUsuario = <TableroUsuarioHockey idDisciplinaClub={disciplinaClub.id} onVolver={() => setDisciplinaClub(undefined)} />
+        VistaTableroUsuario = <TableroUsuarioHockey onVolver={() => setDisciplinaClub(null)} />
         break
     }
 
@@ -67,24 +76,24 @@ const MenuInicio = () => {
       {Encabezado}
       <Contenedor>
         { disciplinasClubes.map(disciplinaClub => (
-            <Boton
-              key={disciplinaClub.id}
-              onClick={() => { setTorneoActual(null); setDisciplinaClub(disciplinaClub) }}
-              colorPrincipal={disciplinaClub.colorPrincipal}
-              colorSecundario={disciplinaClub.colorSecundario}
-            >
-              <ContenedorTexto>
-                <TextoBoton>
-                  {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
-                </TextoBoton>
-                <TextoBoton>
-                  {`${disciplinaClub.nombreLocalidad}`}
-                </TextoBoton>
-              </ContenedorTexto>
-              <Escudo>
-                <img src={require(`../../Recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' />
-              </Escudo>
-            </Boton>
+          <Boton
+            key={disciplinaClub.id}
+            onClick={() => { setTorneoSeleccionado(null); setDisciplinaClub(disciplinaClub) }}
+            colorPrincipal={disciplinaClub.colorPrincipal}
+            colorSecundario={disciplinaClub.colorSecundario}
+          >
+            <ContenedorTexto>
+              <TextoBoton>
+                {`${disciplinaClub.nombreDisciplina} - ${disciplinaClub.nombreClub}`}
+              </TextoBoton>
+              <TextoBoton>
+                {`${disciplinaClub.nombreLocalidad}`}
+              </TextoBoton>
+            </ContenedorTexto>
+            <Escudo>
+              <img src={require(`../../Recursos/clubes/${disciplinaClub.imagenEscudo || 'escudoDefecto.png'}`)} alt='Escudo club' />
+            </Escudo>
+          </Boton>
         ))}
       </Contenedor>
     </>

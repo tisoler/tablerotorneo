@@ -193,14 +193,14 @@ export const Menu = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 30%;
+  width: 40%;
 
   @media (max-width: 768px) {
-    width: 50%;
+    width: 65%;
   }
 
   @media (max-width: 600px) {
-    width: 75%;
+    width: 90%;
   }
 `
 

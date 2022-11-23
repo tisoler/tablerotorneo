@@ -1,25 +1,44 @@
 import { useEffect, useState } from "react"
-import { ClubEncabezado, ContenedorTorneo, DatoEquipo, DatoEquipoEncabezado, EncabezadoTorneo, EquipoConEstilo, FilaEquipoTorneo, NombreClub, NoHayDatos, Escudo } from "../../Estilos/Comunes"
+import { useContextoGlobal } from "../../Contexto/contextoGlobal"
+import {
+  ClubEncabezado,
+  ContenedorTorneo,
+  DatoEquipo,
+  DatoEquipoEncabezado,
+  EncabezadoTorneo,
+  EquipoConEstilo,
+  FilaEquipoTorneo,
+  NombreClub,
+  NoHayDatos,
+  Escudo
+} from "../../Estilos/Comunes"
 import { ObtenerEquipos } from "../../Servicios/Equipo"
 import { Equipo } from "../../Tipos"
 
-const Torneo = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
+const Torneo = () => {
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [cargando, setCargando] = useState<boolean>(true)
 
+  const { torneoSeleccionado } = useContextoGlobal()
+
   useEffect(() => {
     const obtenerGrupos = async () => {
-      const equipos = await ObtenerEquipos(idDisciplinaClub)
+      if (!torneoSeleccionado?.id) return
+      const equipos = await ObtenerEquipos(torneoSeleccionado.id)
       if (equipos?.length) {
         setEquipos(equipos)
       }
       setCargando(false)
     }
-    const intervalo = setInterval(obtenerGrupos, 60000) // Refresco de datos
+
     obtenerGrupos() // Carga inicial
 
-    return () => { if (intervalo) clearInterval(intervalo) }
-  }, [])
+    // Configurar intervalo para refrescar datos solamente si es el torneo actual
+    if (torneoSeleccionado?.activo) {
+      const intervalo = setInterval(obtenerGrupos, 60000) // Refresco de datos
+      return () => { if (intervalo) clearInterval(intervalo) }
+    }
+  }, [torneoSeleccionado])
 
   const ordenarEquipos = (a: Equipo, b: Equipo) => {
     let criterioA = a.posicion || 4
@@ -33,7 +52,7 @@ const Torneo = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
   }
 
   if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
-  if (!equipos?.length) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
+  if (!equipos?.length) return <NoHayDatos>No hay información sobre el torneo.</NoHayDatos>
 
   return (
     <ContenedorTorneo>

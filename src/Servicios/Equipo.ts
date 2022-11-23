@@ -22,9 +22,9 @@ export const ObtenerEquiposParaUsuarioLogueado = async (token: string): Promise<
   }
 }
 
-export const ObtenerEquipos = async (idDisciplinaClub: number): Promise<Equipo[] | null> => {
+export const ObtenerEquipos = async (idTorneo: number): Promise<Equipo[] | null> => {
   try {
-    const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos/${idDisciplinaClub}`)
+    const res = await fetch(`${REACT_APP_BACKEND_URL}/equipos/${idTorneo}`)
     const equipos = await res.json()
 
     return equipos

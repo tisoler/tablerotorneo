@@ -22,8 +22,8 @@ export interface EquipoPayload {
   puntos?: number,
 }
 
-export interface PartidoActual {
-  id?: number,
+export interface PartidoTenisPadel {
+  id: number,
   equipo1: Equipo,
   equipo2: Equipo,
   equipo1Game: number | null,
@@ -38,9 +38,11 @@ export interface PartidoActual {
   tipoSet: 'set' | 'tie-break' | null,
   sacaEquipo1: boolean | null,
   tipoGame: 'game' | 'tie-break' | null,
+  activo: boolean,
 }
 
-export interface PartidoActualPayload {
+export interface PartidoTenisPadelPayload {
+  id?: number,
   idEquipo1?: number,
   idEquipo2?: number,
   equipo1Game?: number | null,
@@ -55,6 +57,7 @@ export interface PartidoActualPayload {
   tipoSet?: 'set' | 'tie-break' | null,
   sacaEquipo1?: boolean | null,
   tipoGame?: 'game' | 'tie-break' | null,
+  activo?: number | null,
 }
 
 export interface PartidoFutbol {
@@ -69,6 +72,7 @@ export interface PartidoFutbol {
   idTorneoDisciplinaClub: number,
   minutosPrimerTiempo?: number,
   minutosSegundoTiempo?: number,
+  activo: boolean,
 }
 
 export interface PartidoFutbolPayload {
@@ -100,6 +104,7 @@ export interface PartidoHockey {
   minutosSegundoCuarto?: number,
   minutosTercerCuarto?: number,
   minutosCuartoCuarto?: number,
+  activo: boolean,
 }
 
 export interface PartidoHockeyPayload {
@@ -117,7 +122,7 @@ export interface PartidoHockeyPayload {
   activo?: number | null,
 }
 
-export type PantallaMostrar = 'grupo' | 'partido' | 'cuadro' | 'torneo'
+export type PantallaMostrar = 'grupo' | 'partido' | 'partidosJugados' | 'cuadro' | 'torneo'
 
 export interface Configuracion {
   pantallaMostrar: PantallaMostrar,
@@ -170,14 +175,16 @@ export interface DisciplinaClub {
   colorPrincipal: string,
   colorSecundario: string,
   imagenEscudo: string,
-  activo: number,
+  activo: boolean,
 }
 
 export interface Torneo {
+  id?: number,
   iniciales?: string,
   nombreMostrar?: string,
   sponsor?: string,
   imagenSponsor?: string,
   imagenEscudo?: string,
   colorFondoSponsor?: string,
+  activo?: boolean,
 }

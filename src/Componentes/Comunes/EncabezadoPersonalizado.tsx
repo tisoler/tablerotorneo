@@ -12,7 +12,7 @@ interface EncabezadoProps {
   colorFondoSponsor?: string,
 }
 
-const Encabezado = (props: EncabezadoProps) => {
+const EncabezadoPersonalizado = (props: EncabezadoProps) => {
   const { iniciales, nombreMostrar, sponsor, imagenSponsor, imagenEscudo, colorFondoSponsor } = props
 
   return (
@@ -263,4 +263,4 @@ const ContenedorLogoGeneral = styled.div`
   padding: 0 3.75px;
 `
 
-export default Encabezado
+export default EncabezadoPersonalizado

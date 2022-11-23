@@ -5,6 +5,7 @@ import Grupos from "./Grupos"
 import Partido from "./Partido"
 import Cuadro from './Cuadro'
 import EncabezadoPersonalizado from "../Comunes/EncabezadoPersonalizado"
+import PartidosJugados from "./PartidosJugados"
 
 const CONFIGURACION_INICIAL: Configuracion = {
   pantallaMostrar: 'grupo',
@@ -29,11 +30,13 @@ const Tablero = () => {
   const renderPantalla = () => {
     switch(configuracion?.pantallaMostrar) {
       case 'partido':
-        return <Partido />
+        return <Partido /> // HACER: Agregar login para setear disciplinaClub
+      case 'partidosJugados':
+        return <PartidosJugados />
       case 'cuadro':
-        return <Cuadro idDisciplinaClub={1} />
+        return <Cuadro />
       default:
-        return <Grupos idDisciplinaClub={1} />
+        return <Grupos />
     }
   }
 

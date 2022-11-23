@@ -26,10 +26,11 @@ import {
 import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
 import { ActualizarCuadroFinalParaUsuarioLogueado, ObtenerCuadroFinalParaUsuarioLogueado } from '../../Servicios/CuadroFinal'
 import { ActualizarEquipo, ObtenerEquiposParaUsuarioLogueado } from '../../Servicios/Equipo'
-import { ActualizarGame, ActualizarPartidoActual, ObtenerPartidoActual } from '../../Servicios/PartidoActual'
-import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoActual, PartidoActualPayload } from '../../Tipos'
+import { ActualizarGame, ActualizarPartidoTenisPadelActual, BorrarPartidoTenisPadelActual, CrearPartidoTenisPadelActual, ObtenerPartidoTenisPadelActualParaUsuario } from '../../Servicios/PartidoTenisPadel'
+import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoTenisPadel, PartidoTenisPadelPayload } from '../../Tipos'
 
-const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
+const PARTIDO_ACTUAL_INICIAL: PartidoTenisPadel = {
+  id: -1,
   equipo1: {
     id: 0,
     nombreJugador1: 'Jugador/a 1',
@@ -51,21 +52,24 @@ const PARTIDO_ACTUAL_INICIAL: PartidoActual = {
   setActual: 1,
   tipoSet: 'set',
   sacaEquipo1: true,
-  tipoGame: 'game'
+  tipoGame: 'game',
+  activo: true,
 }
 
 const TableroComandos = () => {
-  const [partidoActual, setPartidoActual] = useState<PartidoActual>(PARTIDO_ACTUAL_INICIAL)
+  const [partidoActual, setPartidoActual] = useState<PartidoTenisPadel>(PARTIDO_ACTUAL_INICIAL)
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [grupos, setGrupos] = useState<string[]>([])
   const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal>()
+  const [idEquipo1, setIdEquipo1] = useState<number>(-1)
+  const [idEquipo2, setIdEquipo2] = useState<number>(-1)
 
   const { token, limpiarAutenticacion } = useContextoGlobal()
 
   useEffect(() => {
     const obtenerDatos = async () => {
       // PARTIDO ACTUAL
-      const partidoActualDB = await ObtenerPartidoActual()
+      const partidoActualDB = await ObtenerPartidoTenisPadelActualParaUsuario(token)
       if (partidoActualDB) {
         setPartidoActual({
           ...partidoActualDB,
@@ -111,14 +115,40 @@ const TableroComandos = () => {
     obtenerDatos()
   }, [])
 
-  const actualizarGame = async (suma = true, esEquipo1 = true) => {
-    const partidoActualActualizado = await ActualizarGame({ suma, esEquipo1 }, token, limpiarAutenticacion)
+  const crearPartido = async () => {
+    const partidoActualActualizado = await CrearPartidoTenisPadelActual(
+      { id: partidoActual.id, idEquipo1: idEquipo1 > -1 ? idEquipo1 : equipos[0].id, idEquipo2: idEquipo2 > -1 ? idEquipo2 : equipos[0].id },
+      token,
+      limpiarAutenticacion
+    )
     if (partidoActualActualizado) setPartidoActual(partidoActualActualizado)
   }
 
-  const actualizarPartido = async (payload: PartidoActualPayload) => {
-    const partidoActualActualizado = await ActualizarPartidoActual(payload, token, limpiarAutenticacion)
+  const actualizarGame = async (suma = true, esEquipo1 = true) => {
+    if (!partidoActual?.id || partidoActual.id <= 0) {
+      return
+    }
+    const partidoActualActualizado = await ActualizarGame({ id: partidoActual.id, suma, esEquipo1 }, token, limpiarAutenticacion)
     if (partidoActualActualizado) setPartidoActual(partidoActualActualizado)
+  }
+
+  const actualizarPartido = async (payload: PartidoTenisPadelPayload) => {
+    if (!partidoActual?.id || partidoActual.id <= 0) {
+      const { idEquipo1, idEquipo2 } = payload
+      if (idEquipo1) setIdEquipo1(idEquipo1)
+      if (idEquipo2) setIdEquipo2(idEquipo2)
+      return
+    }
+
+    const partidoActualActualizado = await ActualizarPartidoTenisPadelActual({ id: partidoActual.id, ...payload }, token, limpiarAutenticacion)
+    setPartidoActual(partidoActualActualizado?? PARTIDO_ACTUAL_INICIAL)
+  }
+
+  const borrarPartido = async () => {
+    if (!partidoActual?.id || partidoActual.id <= 0) return
+
+    const partidoActualActualizado = await BorrarPartidoTenisPadelActual(partidoActual.id, token, limpiarAutenticacion)
+    setPartidoActual(partidoActualActualizado ?? PARTIDO_ACTUAL_INICIAL)
   }
 
   const actualizarCuadroFinal = async (payload: CuadroFinalPayload) => {
@@ -273,7 +303,7 @@ const TableroComandos = () => {
             <>
               <Titulo>Equipo 1:</Titulo>
               <Select
-                value={partidoActual?.equipo1?.id}
+                value={partidoActual?.equipo1?.id > 0 ? partidoActual.equipo1.id : idEquipo1}
                 onChange={(evt: any) => actualizarPartido({ idEquipo1: evt?.target?.value || 1 })}
               >
                 {equipos?.map(equipo => <option key={equipo.id} value={equipo.id}>{`${equipo.nombreJugador1} - ${equipo.nombreJugador2}`}</option>)}
@@ -282,7 +312,7 @@ const TableroComandos = () => {
             <>
               <Titulo>Equipo 2:</Titulo>
               <Select
-                value={partidoActual?.equipo2?.id}
+                value={partidoActual?.equipo2?.id > 0 ? partidoActual.equipo2.id : idEquipo2}
                 onChange={(evt: any) => actualizarPartido({ idEquipo2: evt?.target?.value || 1 })}
               >
                 {equipos?.map(equipo => <option key={equipo.id} value={equipo.id}>{`${equipo.nombreJugador1} - ${equipo.nombreJugador2}`}</option>)}
@@ -363,6 +393,8 @@ const TableroComandos = () => {
             </div>
           </Fila>
           <Fila>
+            {partidoActual.id < 0 && <Boton ancho={200} onClick={() => crearPartido()}>Comenzar</Boton>}
+            {partidoActual.id > 0 && <Boton ancho={200} onClick={() => actualizarPartido({ activo: 0 })}>Terminar</Boton>}
             <Boton ancho={130} onClick={() => actualizarPartido(
               {
                 equipo1Game: 0,
@@ -377,6 +409,9 @@ const TableroComandos = () => {
                 tipoSet: 'set',
               }
             )}>Reiniciar</Boton>
+            {partidoActual.id > 0 && 
+              <Boton ancho={130} onClick={() => borrarPartido()}>Cancelar</Boton>
+            }
           </Fila>
         </Tablero>
       </TableroPartido>
@@ -430,7 +465,7 @@ const TableroComandos = () => {
                         value={equipo.partidosGanados || ''}
                         onChange={async (evt) => {
                           if (isNaN(Number(evt?.target?.value))) return
-                          await actualizarEquipo(equipo.id, { partidosJugados: parseInt(evt?.target?.value) })
+                          await actualizarEquipo(equipo.id, { partidosGanados: parseInt(evt?.target?.value) })
                         }}
                       >
                       </SetInput>

@@ -2,9 +2,9 @@ import { PartidoHockey, PartidoHockeyPayload } from "../Tipos"
 
 const { REACT_APP_BACKEND_URL } = process.env
 
-export const ObtenerPartidoHockeyActual = async (idDisciplinaClub: number): Promise<PartidoHockey | null> => {
+export const ObtenerPartidoHockeyActual = async (idTorneo: number): Promise<PartidoHockey | null> => {
   try {
-    const res = await fetch(`${REACT_APP_BACKEND_URL}/partidoHockeyActual/${idDisciplinaClub}`)
+    const res = await fetch(`${REACT_APP_BACKEND_URL}/partidoHockeyActual/${idTorneo}`)
     const partidoActual = await res.json()
 
     return partidoActual

@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import Logo from '../../Recursos/comunes/logo'
 
 const Encabezado = () => {
-  
   return (
     <EncabezadoDiv>
       <Titulo>

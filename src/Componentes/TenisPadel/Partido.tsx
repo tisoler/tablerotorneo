@@ -1,22 +1,29 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { ObtenerPartidoActual } from '../../Servicios/PartidoActual'
-import { PartidoActual } from '../../Tipos'
+import { ObtenerPartidoTenisPadelActual } from '../../Servicios/PartidoTenisPadel'
+import { PartidoTenisPadel } from '../../Tipos'
 import Pelota from '../../Recursos/comunes/pelota'
 import { colorPrincipal, NoHayDatos } from '../../Estilos/Comunes'
+import { useContextoGlobal } from '../../Contexto/contextoGlobal'
 
 const Partido = () => {
-  const [partidoActual, setPartidoActual] = useState<PartidoActual | null>()
+  const [partidoActual, setPartidoActual] = useState<PartidoTenisPadel | null>()
   const [mostrarSet1, setMostrarSet1] = useState<boolean>(true)
   const [mostrarSet2, setMostrarSet2] = useState<boolean>(false)
   const [mostrarSet3, setMostrarSet3] = useState<boolean>(false)
   const [mostrarGame, setMostrarGame] = useState<boolean>(false)
   const [cargando, setCargando] = useState<boolean>(true)
 
+  const { torneoSeleccionado } = useContextoGlobal()
+
   useEffect(() => {
+    setPartidoActual(null)
+    setCargando(true)
+
     const obtenerPartidoActual = async () => {
-      const partidoActualDB = await ObtenerPartidoActual()
+      if (!torneoSeleccionado?.id) return
+      const partidoActualDB = await ObtenerPartidoTenisPadelActual(torneoSeleccionado.id)
       if (partidoActualDB) {
         setPartidoActual({
           ...partidoActualDB,
@@ -42,14 +49,19 @@ const Partido = () => {
       }
       setCargando(false)
     }
-    const intervalo = setInterval(obtenerPartidoActual, 1500) // Refresco de datos
+    
     obtenerPartidoActual() // Carga inicial
 
-    return () => { if (intervalo) clearInterval(intervalo) }
-  }, [])
+    // Configurar intervalo para refrescar datos solamente si es el torneo actual
+    if (torneoSeleccionado?.activo) {
+      const intervalo = setInterval(obtenerPartidoActual, 1500) // Refresco de datos
+      return () => { if (intervalo) clearInterval(intervalo) }
+    }
+  }, [torneoSeleccionado])
 
   if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
-  if (!partidoActual) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
+  if (!torneoSeleccionado?.activo) return <NoHayDatos>Este torneo ha finalizado.</NoHayDatos>
+  if (!partidoActual) return <NoHayDatos>No hay partido en curso.</NoHayDatos>
 
   return (
     <Tablero>
@@ -78,7 +90,7 @@ const Partido = () => {
       </Fila>
       <Fila>
         <Equipo>
-         <Jugadores>
+          <Jugadores>
             <Jugador>{partidoActual?.equipo2?.nombreJugador1 || 'Jugador/a 1'}</Jugador>
             <Jugador>{partidoActual?.equipo2?.nombreJugador2 || 'Jugador/a 2'}</Jugador>
           </Jugadores>

@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react'
+import { useContextoGlobal } from '../../Contexto/contextoGlobal'
 import {
   ContenedorTiempoCuarto,
   ContenedorTiempoCuartoMovil,
@@ -19,13 +20,19 @@ import {
 import { ObtenerPartidoHockeyActual } from '../../Servicios/PartidoHockey'
 import { PartidoHockey as PartidoHockeyTipo } from '../../Tipos'
 
-const PartidoHockey = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
+const PartidoHockey = () => {
   const [partidoActual, setPartidoActual] = useState<PartidoHockeyTipo | null>()
   const [cargando, setCargando] = useState<boolean>(true)
 
+  const { torneoSeleccionado } = useContextoGlobal()
+
   useEffect(() => {
+    setPartidoActual(null)
+    setCargando(true)
+
     const obtenerPartidoHockeyActual = async () => {
-      const partidoHockeyDB = await ObtenerPartidoHockeyActual(idDisciplinaClub)
+      if (!torneoSeleccionado?.id) return
+      const partidoHockeyDB = await ObtenerPartidoHockeyActual(torneoSeleccionado.id)
       if (partidoHockeyDB) {
         setPartidoActual({
           ...partidoHockeyDB,
@@ -34,16 +41,18 @@ const PartidoHockey = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
           numeroCuarto: partidoHockeyDB.numeroCuarto ?? 1,
           idTorneoDisciplinaClub: partidoHockeyDB.idTorneoDisciplinaClub ?? -1,
         })
-      } else {
-        setPartidoActual(null)
       }
       setCargando(false)
     }
-    const intervalo = setInterval(obtenerPartidoHockeyActual, 30000) // Refresco de datos
+
     obtenerPartidoHockeyActual() // Carga inicial
 
-    return () => { if (intervalo) clearInterval(intervalo) }
-  }, [])
+    // Configurar intervalo para refrescar datos solamente si es el torneo actual
+    if (torneoSeleccionado?.activo) {
+      const intervalo = setInterval(obtenerPartidoHockeyActual, 30000) // Refresco de datos
+      return () => { if (intervalo) clearInterval(intervalo) }
+    }
+  }, [torneoSeleccionado])
 
   if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
   if (!partidoActual) return <NoHayDatos>No hay partido en curso.</NoHayDatos>

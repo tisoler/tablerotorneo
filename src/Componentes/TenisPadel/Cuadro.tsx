@@ -1,29 +1,39 @@
 import { useEffect, useState } from 'react'
 import styled from 'styled-components'
-import { ObtenerCuadroFinalActual } from '../../Servicios/CuadroFinal'
+import { ObtenerCuadroFinalParaTorneo } from '../../Servicios/CuadroFinal'
 import { CuadroFinal } from '../../Tipos'
 import Copa from '../../Recursos/comunes/copa'
 import { NoHayDatos } from '../../Estilos/Comunes'
+import { useContextoGlobal } from '../../Contexto/contextoGlobal'
 
-const Cuadro = ({ idDisciplinaClub }: { idDisciplinaClub: number }) => {
+const Cuadro = () => {
   const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal | null>()
   const [cargando, setCargando] = useState<boolean>(true)
   const { innerWidth: width } = window;
 
+  const { torneoSeleccionado } = useContextoGlobal()
+
   useEffect(() => {
+    setCargando(true)
+
     const obtenerCuadroFinal = async () => {
-      const cuadroFinalDB = await ObtenerCuadroFinalActual(idDisciplinaClub)
+      if (!torneoSeleccionado?.id) return
+      const cuadroFinalDB = await ObtenerCuadroFinalParaTorneo(torneoSeleccionado.id)
       setCuadroFinal(cuadroFinalDB)
       setCargando(false)
     }
-    const intervalo = setInterval(obtenerCuadroFinal, 60000) // Refresco de datos
+
     obtenerCuadroFinal() // Carga inicial
 
-    return () => { if (intervalo) clearInterval(intervalo) }
-  }, [])
+    // Configurar intervalo para refrescar datos solamente si es el torneo actual
+    if (torneoSeleccionado?.activo) {
+      const intervalo = setInterval(obtenerCuadroFinal, 60000) // Refresco de datos
+      return () => { if (intervalo) clearInterval(intervalo) }
+    }
+  }, [torneoSeleccionado])
 
   if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
-  if (!cuadroFinal) return <NoHayDatos>No hay información sobre torneos.</NoHayDatos>
+  if (!cuadroFinal) return <NoHayDatos>No hay información sobre el torneo.</NoHayDatos>
 
   return (
     <ContenedorGeneral>
