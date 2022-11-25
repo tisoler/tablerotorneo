@@ -130,6 +130,7 @@ const Tablero = styled.div`
   @media (max-width: 768px) {
     margin: 50px 0;
     flex-direction: column;
+    padding-bottom: 65px;
   }
 
   @media (max-width: 600px) {
