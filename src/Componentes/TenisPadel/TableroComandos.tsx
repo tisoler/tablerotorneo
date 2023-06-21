@@ -26,7 +26,13 @@ import {
 import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
 import { ActualizarCuadroFinalParaUsuarioLogueado, ObtenerCuadroFinalParaUsuarioLogueado } from '../../Servicios/CuadroFinal'
 import { ActualizarEquipo, ObtenerEquiposParaUsuarioLogueado } from '../../Servicios/Equipo'
-import { ActualizarGame, ActualizarPartidoTenisPadelActual, BorrarPartidoTenisPadelActual, CrearPartidoTenisPadelActual, ObtenerPartidoTenisPadelActualParaUsuario } from '../../Servicios/PartidoTenisPadel'
+import {
+  ActualizarGame,
+  ActualizarPartidoTenisPadelActual,
+  BorrarPartidoTenisPadelActual,
+  CrearPartidoTenisPadelActual,
+  ObtenerPartidosTenisPadelActualesParaUsuario
+} from '../../Servicios/PartidoTenisPadel'
 import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoTenisPadel, PartidoTenisPadelPayload } from '../../Tipos'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoTenisPadel = {
@@ -57,7 +63,7 @@ const PARTIDO_ACTUAL_INICIAL: PartidoTenisPadel = {
 }
 
 const TableroComandos = () => {
-  const [partidoActual, setPartidoActual] = useState<PartidoTenisPadel>(PARTIDO_ACTUAL_INICIAL)
+  const [partidosActuales, setPartidosActuales] = useState<PartidoTenisPadel[]>([PARTIDO_ACTUAL_INICIAL])
   const [equipos, setEquipos] = useState<Equipo[]>([])
   const [grupos, setGrupos] = useState<string[]>([])
   const [cuadroFinal, setCuadroFinal] = useState<CuadroFinal>()
@@ -69,23 +75,26 @@ const TableroComandos = () => {
   useEffect(() => {
     const obtenerDatos = async () => {
       // PARTIDO ACTUAL
-      const partidoActualDB = await ObtenerPartidoTenisPadelActualParaUsuario(token)
-      if (partidoActualDB) {
-        setPartidoActual({
-          ...partidoActualDB,
-          equipo1Game: partidoActualDB.equipo1Game ?? 0,
-          equipo2Game: partidoActualDB.equipo2Game ?? 0,
-          equipo1Set1: partidoActualDB.equipo1Set1 ?? 0,
-          equipo1Set2: partidoActualDB.equipo1Set2 ?? 0,
-          equipo1Set3: partidoActualDB.equipo1Set3 ?? 0,
-          equipo2Set1: partidoActualDB.equipo2Set1 ?? 0,
-          equipo2Set2: partidoActualDB.equipo2Set2 ?? 0,
-          equipo2Set3: partidoActualDB.equipo2Set3 ?? 0,
-          setActual: partidoActualDB.setActual ?? 1,
-          tipoSet: partidoActualDB.tipoSet ?? 'set',
-          sacaEquipo1: partidoActualDB.sacaEquipo1 ?? true,
-          tipoGame: partidoActualDB.tipoGame ?? 'game',
-        })
+      const partidosActualesDB = await ObtenerPartidosTenisPadelActualesParaUsuario(token)
+      if (partidosActualesDB?.length) {
+        const partidos = partidosActualesDB.map(partidoActualDB => (
+          {
+            ...partidoActualDB,
+            equipo1Game: partidoActualDB.equipo1Game ?? 0,
+            equipo2Game: partidoActualDB.equipo2Game ?? 0,
+            equipo1Set1: partidoActualDB.equipo1Set1 ?? 0,
+            equipo1Set2: partidoActualDB.equipo1Set2 ?? 0,
+            equipo1Set3: partidoActualDB.equipo1Set3 ?? 0,
+            equipo2Set1: partidoActualDB.equipo2Set1 ?? 0,
+            equipo2Set2: partidoActualDB.equipo2Set2 ?? 0,
+            equipo2Set3: partidoActualDB.equipo2Set3 ?? 0,
+            setActual: partidoActualDB.setActual ?? 1,
+            tipoSet: partidoActualDB.tipoSet ?? 'set',
+            sacaEquipo1: partidoActualDB.sacaEquipo1 ?? true,
+            tipoGame: partidoActualDB.tipoGame ?? 'game',
+          }
+        ))
+        setPartidosActuales(partidos)
       }
 
       // EQUIPOS
@@ -115,24 +124,24 @@ const TableroComandos = () => {
     obtenerDatos()
   }, [])
 
-  const crearPartido = async () => {
-    const partidoActualActualizado = await CrearPartidoTenisPadelActual(
+  const crearPartido = async (partidoActual: PartidoTenisPadel) => {
+    const partidoActualesActualizados = await CrearPartidoTenisPadelActual(
       { id: partidoActual.id, idEquipo1: idEquipo1 > -1 ? idEquipo1 : equipos[0].id, idEquipo2: idEquipo2 > -1 ? idEquipo2 : equipos[0].id },
       token,
       limpiarAutenticacion
     )
-    if (partidoActualActualizado) setPartidoActual(partidoActualActualizado)
+    if (partidoActualesActualizados) setPartidosActuales(partidoActualesActualizados)
   }
 
-  const actualizarGame = async (suma = true, esEquipo1 = true) => {
+  const actualizarGame = async (partidoActual: PartidoTenisPadel, suma = true, esEquipo1 = true) => {
     if (!partidoActual?.id || partidoActual.id <= 0) {
       return
     }
-    const partidoActualActualizado = await ActualizarGame({ id: partidoActual.id, suma, esEquipo1 }, token, limpiarAutenticacion)
-    if (partidoActualActualizado) setPartidoActual(partidoActualActualizado)
+    const partidoActualesActualizados = await ActualizarGame({ id: partidoActual.id, suma, esEquipo1 }, token, limpiarAutenticacion)
+    if (partidoActualesActualizados) setPartidosActuales(partidoActualesActualizados)
   }
 
-  const actualizarPartido = async (payload: PartidoTenisPadelPayload) => {
+  const actualizarPartido = async (partidoActual: PartidoTenisPadel, payload: PartidoTenisPadelPayload) => {
     if (!partidoActual?.id || partidoActual.id <= 0) {
       const { idEquipo1, idEquipo2 } = payload
       if (idEquipo1) setIdEquipo1(idEquipo1)
@@ -140,15 +149,15 @@ const TableroComandos = () => {
       return
     }
 
-    const partidoActualActualizado = await ActualizarPartidoTenisPadelActual({ id: partidoActual.id, ...payload }, token, limpiarAutenticacion)
-    setPartidoActual(partidoActualActualizado?? PARTIDO_ACTUAL_INICIAL)
+    const partidoActualesActualizados = await ActualizarPartidoTenisPadelActual({ id: partidoActual.id, ...payload }, token, limpiarAutenticacion)
+    setPartidosActuales(partidoActualesActualizados ?? [PARTIDO_ACTUAL_INICIAL])
   }
 
-  const borrarPartido = async () => {
+  const borrarPartido = async (partidoActual: PartidoTenisPadel) => {
     if (!partidoActual?.id || partidoActual.id <= 0) return
 
-    const partidoActualActualizado = await BorrarPartidoTenisPadelActual(partidoActual.id, token, limpiarAutenticacion)
-    setPartidoActual(partidoActualActualizado ?? PARTIDO_ACTUAL_INICIAL)
+    const partidoActualesActualizados = await BorrarPartidoTenisPadelActual(partidoActual.id, token, limpiarAutenticacion)
+    setPartidosActuales(partidoActualesActualizados ?? [PARTIDO_ACTUAL_INICIAL])
   }
 
   const actualizarCuadroFinal = async (payload: CuadroFinalPayload) => {
@@ -157,8 +166,8 @@ const TableroComandos = () => {
   }
 
   const FilaSet = (
-    {titulo, campoEquipo1, valorSetEquipo1, campoEquipo2, valorSetEquipo2}
-      : {titulo: string, campoEquipo1: string, valorSetEquipo1: number, campoEquipo2: string, valorSetEquipo2: number}
+    {partidoActual, titulo, campoEquipo1, valorSetEquipo1, campoEquipo2, valorSetEquipo2}
+      : {partidoActual: PartidoTenisPadel, titulo: string, campoEquipo1: string, valorSetEquipo1: number, campoEquipo2: string, valorSetEquipo2: number}
   ) => (
     <Fila>
       <Titulo>{titulo}</Titulo>
@@ -166,14 +175,14 @@ const TableroComandos = () => {
         <SetInput readOnly value={valorSetEquipo1 || 0}></SetInput>
         <ContenedorBotones>
           <Boton
-            onClick={() => actualizarPartido({
+            onClick={() => actualizarPartido(partidoActual, {
               [campoEquipo1]: (valorSetEquipo1 || 0) + 1
             })}
           >
             +
           </Boton>
           <Boton
-            onClick={() => actualizarPartido({
+            onClick={() => actualizarPartido(partidoActual, {
               [campoEquipo1]: (valorSetEquipo1 || 0) - 1
             })}
           >
@@ -185,14 +194,14 @@ const TableroComandos = () => {
         <SetInput readOnly value={valorSetEquipo2 || 0}></SetInput>
         <ContenedorBotones>
           <Boton
-            onClick={() => actualizarPartido({
+            onClick={() => actualizarPartido(partidoActual, {
               [campoEquipo2]: (valorSetEquipo2 || 0) + 1
             })}
           >
             +
           </Boton>
           <Boton
-            onClick={() => actualizarPartido({
+            onClick={() => actualizarPartido(partidoActual, {
               [campoEquipo2]: (valorSetEquipo2 || 0) - 1
             })}
           >
@@ -203,8 +212,8 @@ const TableroComandos = () => {
     </Fila>
   )
 
-  const FilaGame = ({titulo, valorGameEquipo1, valorGameEquipo2}
-    : {titulo: string, valorGameEquipo1: number, valorGameEquipo2: number}
+  const FilaGame = ({partidoActual, titulo, valorGameEquipo1, valorGameEquipo2}
+    : {partidoActual: PartidoTenisPadel ,titulo: string, valorGameEquipo1: number, valorGameEquipo2: number}
   ) => (
     <Fila>
       <Titulo>{titulo}</Titulo>
@@ -220,8 +229,8 @@ const TableroComandos = () => {
           }
         ></SetInput>
         <ContenedorBotones>
-          <Boton onClick={() => actualizarGame(true, true)}>+</Boton>
-          <Boton onClick={() => actualizarGame(false, true)}>-</Boton>
+          <Boton onClick={() => actualizarGame(partidoActual, true, true)}>+</Boton>
+          <Boton onClick={() => actualizarGame(partidoActual, false, true)}>-</Boton>
         </ContenedorBotones>
       </Set>
       <Set>
@@ -236,8 +245,8 @@ const TableroComandos = () => {
           }
         ></SetInput>
         <ContenedorBotones>
-          <Boton onClick={() => actualizarGame(true, false)}>+</Boton>
-          <Boton onClick={() => actualizarGame(false, false)}>-</Boton>
+          <Boton onClick={() => actualizarGame(partidoActual, true, false)}>+</Boton>
+          <Boton onClick={() => actualizarGame(partidoActual, false, false)}>-</Boton>
         </ContenedorBotones>
       </Set>
     </Fila>
@@ -262,7 +271,7 @@ const TableroComandos = () => {
 
     let equiposActualizados = null
     if (valor === '-') {
-      equiposActualizados = equipos.map(eq => {
+      equiposActualizados = equipos?.map(eq => {
         if (eq.id === idEquipoFila) {
           eq[campo] = '-'
         }
@@ -297,123 +306,140 @@ const TableroComandos = () => {
       </TableroPantallas>
 
       <TableroPartido>
-        <TituloGrande>PARTIDO ACTUAL</TituloGrande>
-        <Tablero>
-          <FilaEquipo>
-            <>
-              <Titulo>Equipo 1:</Titulo>
-              <Select
-                value={partidoActual?.equipo1?.id > 0 ? partidoActual.equipo1.id : idEquipo1}
-                onChange={(evt: any) => actualizarPartido({ idEquipo1: evt?.target?.value || 1 })}
-              >
-                {equipos?.map(equipo => <option key={equipo.id} value={equipo.id}>{`${equipo.nombreJugador1} - ${equipo.nombreJugador2}`}</option>)}
-              </Select>
-            </>
-            <>
-              <Titulo>Equipo 2:</Titulo>
-              <Select
-                value={partidoActual?.equipo2?.id > 0 ? partidoActual.equipo2.id : idEquipo2}
-                onChange={(evt: any) => actualizarPartido({ idEquipo2: evt?.target?.value || 1 })}
-              >
-                {equipos?.map(equipo => <option key={equipo.id} value={equipo.id}>{`${equipo.nombreJugador1} - ${equipo.nombreJugador2}`}</option>)}
-              </Select>
-            </>
-          </FilaEquipo>
-          <FilaGame
-            titulo='Game:'
-            valorGameEquipo1={partidoActual?.equipo1Game || 0}
-            valorGameEquipo2={partidoActual?.equipo2Game || 0}
-          />
-          <FilaSet
-            titulo='Set 1:'
-            campoEquipo1='equipo1Set1'
-            valorSetEquipo1={partidoActual?.equipo1Set1 || 0}
-            campoEquipo2='equipo2Set1'
-            valorSetEquipo2={partidoActual?.equipo2Set1 || 0}
-          />
-          <FilaSet
-            titulo='Set 2:'
-            campoEquipo1='equipo1Set2'
-            valorSetEquipo1={partidoActual?.equipo1Set2 || 0}
-            campoEquipo2='equipo2Set2'
-            valorSetEquipo2={partidoActual?.equipo2Set2 || 0}
-          />
-          <FilaSet
-            titulo='Set 3:'
-            campoEquipo1='equipo1Set3'
-            valorSetEquipo1={partidoActual?.equipo1Set3 || 0}
-            campoEquipo2='equipo2Set3'
-            valorSetEquipo2={partidoActual?.equipo2Set3 || 0}
-          />
-          <Fila>
-            <div style={{ width: '50%' }}>
-              <Titulo>Tipo set:</Titulo>
-              <Select
-                value={partidoActual?.tipoSet || 'set'}
-                onChange={(evt: any) => actualizarPartido({ tipoSet: evt?.target?.value || 'set' })}
-              >
-                <option value={'set'}>Set</option>
-                <option value={'tie-break'}>Tie break</option>
-              </Select>
-            </div>
-            <div style={{ width: '50%' }}>
-              <Titulo>Set actual:</Titulo>
-              <Select
-                value={partidoActual?.setActual || 1}
-                onChange={(evt: any) => actualizarPartido({ setActual: evt?.target?.value || 1 })}
-              >
-                <option value={1}>1</option>
-                <option value={2}>2</option>
-                <option value={3}>3</option>
-              </Select>
-            </div>
-          </Fila>
-          <Fila>
-            <div style={{ width: '50%' }}>
-              <Titulo>Tipo game:</Titulo>
-              <Select
-                value={partidoActual?.tipoGame || 'game'}
-                onChange={(evt: any) => actualizarPartido({
-                  tipoGame: evt?.target?.value || 'game',
-                  equipo1Game: 0,
-                  equipo2Game: 0,
-                })}
-              >
-                <option value={'game'}>Game</option>
-                <option value={'tie-break'}>Tie break</option>
-              </Select>
-            </div>
-            <div style={{ width: '50%', display: 'flex', alignItems: 'center' }}>
-              <Titulo>Saca equipo:</Titulo>
-              <Boton
-                onClick={(evt: any) => actualizarPartido({ sacaEquipo1: partidoActual.sacaEquipo1 ? !partidoActual.sacaEquipo1 : true })}
-              >
-                {!partidoActual.sacaEquipo1 ? '1' : '2'}
-              </Boton>
-            </div>
-          </Fila>
-          <Fila>
-            {partidoActual.id < 0 && <Boton ancho={200} onClick={() => crearPartido()}>Comenzar</Boton>}
-            {partidoActual.id > 0 && <Boton ancho={200} onClick={() => actualizarPartido({ activo: 0 })}>Terminar</Boton>}
-            <Boton ancho={130} onClick={() => actualizarPartido(
-              {
-                equipo1Game: 0,
-                equipo2Game: 0,
-                equipo1Set1: 0,
-                equipo1Set2: 0,
-                equipo1Set3: 0,
-                equipo2Set1: 0,
-                equipo2Set2: 0,
-                equipo2Set3: 0,
-                setActual: 1,
-                tipoSet: 'set',
-              }
-            )}>Reiniciar</Boton>
-            {partidoActual.id > 0 && 
-              <Boton ancho={130} onClick={() => borrarPartido()}>Cancelar</Boton>
-            }
-          </Fila>
-        </Tablero>
+        <TituloGrande>
+          PARTIDOS ACTUALES
+          <Boton 
+            ancho={300}
+            onClick={() => setPartidosActuales(prevState => [...prevState, PARTIDO_ACTUAL_INICIAL])}
+          >
+            Agregar Partido
+          </Boton>
+        </TituloGrande>
+        {
+          partidosActuales?.map(partidoActual => (
+            <Tablero key={partidoActual.id}>
+              <FilaEquipo>
+                <>
+                  <Titulo>Equipo 1:</Titulo>
+                  <Select
+                    value={partidoActual?.equipo1?.id > 0 ? partidoActual.equipo1.id : idEquipo1}
+                    onChange={(evt: any) => actualizarPartido(partidoActual, { idEquipo1: evt?.target?.value || 1 })}
+                  >
+                    {equipos?.map(equipo => <option key={equipo.id} value={equipo.id}>{`${equipo.nombreJugador1} - ${equipo.nombreJugador2}`}</option>)}
+                  </Select>
+                </>
+                <>
+                  <Titulo>Equipo 2:</Titulo>
+                  <Select
+                    value={partidoActual?.equipo2?.id > 0 ? partidoActual.equipo2.id : idEquipo2}
+                    onChange={(evt: any) => actualizarPartido(partidoActual, { idEquipo2: evt?.target?.value || 1 })}
+                  >
+                    {equipos?.map(equipo => <option key={equipo.id} value={equipo.id}>{`${equipo.nombreJugador1} - ${equipo.nombreJugador2}`}</option>)}
+                  </Select>
+                </>
+              </FilaEquipo>
+              <FilaGame
+                partidoActual={partidoActual}
+                titulo='Game:'
+                valorGameEquipo1={partidoActual?.equipo1Game || 0}
+                valorGameEquipo2={partidoActual?.equipo2Game || 0}
+              />
+              <FilaSet
+                partidoActual={partidoActual}
+                titulo='Set 1:'
+                campoEquipo1='equipo1Set1'
+                valorSetEquipo1={partidoActual?.equipo1Set1 || 0}
+                campoEquipo2='equipo2Set1'
+                valorSetEquipo2={partidoActual?.equipo2Set1 || 0}
+              />
+              <FilaSet
+                partidoActual={partidoActual}
+                titulo='Set 2:'
+                campoEquipo1='equipo1Set2'
+                valorSetEquipo1={partidoActual?.equipo1Set2 || 0}
+                campoEquipo2='equipo2Set2'
+                valorSetEquipo2={partidoActual?.equipo2Set2 || 0}
+              />
+              <FilaSet
+                partidoActual={partidoActual}
+                titulo='Set 3:'
+                campoEquipo1='equipo1Set3'
+                valorSetEquipo1={partidoActual?.equipo1Set3 || 0}
+                campoEquipo2='equipo2Set3'
+                valorSetEquipo2={partidoActual?.equipo2Set3 || 0}
+              />
+              <Fila>
+                <div style={{ width: '50%' }}>
+                  <Titulo>Tipo set:</Titulo>
+                  <Select
+                    value={partidoActual?.tipoSet || 'set'}
+                    onChange={(evt: any) => actualizarPartido(partidoActual, { tipoSet: evt?.target?.value || 'set' })}
+                  >
+                    <option value={'set'}>Set</option>
+                    <option value={'tie-break'}>Tie break</option>
+                  </Select>
+                </div>
+                <div style={{ width: '50%' }}>
+                  <Titulo>Set actual:</Titulo>
+                  <Select
+                    value={partidoActual?.setActual || 1}
+                    onChange={(evt: any) => actualizarPartido(partidoActual, { setActual: evt?.target?.value || 1 })}
+                  >
+                    <option value={1}>1</option>
+                    <option value={2}>2</option>
+                    <option value={3}>3</option>
+                  </Select>
+                </div>
+              </Fila>
+              <Fila>
+                <div style={{ width: '50%' }}>
+                  <Titulo>Tipo game:</Titulo>
+                  <Select
+                    value={partidoActual?.tipoGame || 'game'}
+                    onChange={(evt: any) => actualizarPartido(partidoActual,
+                    {
+                      tipoGame: evt?.target?.value || 'game',
+                      equipo1Game: 0,
+                      equipo2Game: 0,
+                    })}
+                  >
+                    <option value={'game'}>Game</option>
+                    <option value={'tie-break'}>Tie break</option>
+                  </Select>
+                </div>
+                <div style={{ width: '50%', display: 'flex', alignItems: 'center' }}>
+                  <Titulo>Saca equipo:</Titulo>
+                  <Boton
+                    onClick={(evt: any) => actualizarPartido(partidoActual, { sacaEquipo1: partidoActual.sacaEquipo1 ? !partidoActual.sacaEquipo1 : true })}
+                  >
+                    {!partidoActual.sacaEquipo1 ? '1' : '2'}
+                  </Boton>
+                </div>
+              </Fila>
+              <Fila>
+                {partidoActual.id < 0 && <Boton ancho={200} onClick={() => crearPartido(partidoActual)}>Comenzar</Boton>}
+                {partidoActual.id > 0 && <Boton ancho={200} onClick={() => actualizarPartido(partidoActual, { activo: 0 })}>Terminar</Boton>}
+                <Boton ancho={130} onClick={() => actualizarPartido(partidoActual,
+                  {
+                    equipo1Game: 0,
+                    equipo2Game: 0,
+                    equipo1Set1: 0,
+                    equipo1Set2: 0,
+                    equipo1Set3: 0,
+                    equipo2Set1: 0,
+                    equipo2Set2: 0,
+                    equipo2Set3: 0,
+                    setActual: 1,
+                    tipoSet: 'set',
+                  }
+                )}>Reiniciar</Boton>
+                {partidoActual.id > 0 && 
+                  <Boton ancho={130} onClick={() => borrarPartido(partidoActual)}>Cancelar</Boton>
+                }
+              </Fila>
+            </Tablero>
+          ))
+        }
       </TableroPartido>
 
       <ContenedorGrupos>

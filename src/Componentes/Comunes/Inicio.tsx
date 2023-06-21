@@ -10,24 +10,34 @@ import EncabezadoPersonalizado from './EncabezadoPersonalizado'
 import { ObtenerTorneoActual, ObtenerTorneos } from "../../Servicios/Torneo"
 import { NoHayDatos } from "../../Estilos/Comunes"
 import { useContextoGlobal } from "../../Contexto/contextoGlobal"
+import { useParams } from "react-router-dom"
 
 const MenuInicio = () => {
   const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>()
 
   const { setDisciplinaClub, disciplinaClub, setTorneos, setTorneoSeleccionado, torneoSeleccionado } = useContextoGlobal()
+  const parammetros = useParams()
 
   useEffect(() => {
     const obtenerDisciplinasClubes = async () => {
       const disciplinasClubesInicial = await ObtenerDisciplinasClubes()
       setDisciplinasClubes(disciplinasClubesInicial ?? [])
+      
+      // Setear disciplina club cuando se ingresa por url con idDisciplinaClub
+      if (!disciplinaClub && parammetros?.idDisciplinaClub) {
+        const disciplinaClubPorUrl = disciplinasClubesInicial?.find(dc => dc.id === parseInt(parammetros.idDisciplinaClub || '0'))
+        if (disciplinaClubPorUrl) setDisciplinaClub(disciplinaClubPorUrl)
+      }
     }
     obtenerDisciplinasClubes()
-  }, [])
+  }, [parammetros])
 
   useEffect(() => {
     const obtenerDatosTorneoActual = async () => {
-      if (torneoSeleccionado || !disciplinaClub?.id) return null
-      const torneoActualBD = await ObtenerTorneoActual(disciplinaClub.id)
+      const idDisciplinaClub = disciplinaClub?.id?.toString() || parammetros?.idDisciplinaClub
+      // Recupera torneo activo para disciplina club
+      if (torneoSeleccionado || !idDisciplinaClub) return null
+      const torneoActualBD = await ObtenerTorneoActual(parseInt(idDisciplinaClub))
       if (torneoActualBD) setTorneoSeleccionado(torneoActualBD)
     }
 
@@ -39,7 +49,7 @@ const MenuInicio = () => {
 
     obtenerDatosTorneoActual()
     obtenerDatosTorneos()
-  }, [disciplinaClub])
+  }, [disciplinaClub, parammetros])
 
   let Encabezado = <EncabezadoGeneral />
   let VistaTableroUsuario

@@ -3,12 +3,12 @@ import { PartidoTenisPadel, PartidoTenisPadelPayload } from "../Tipos"
 const { REACT_APP_BACKEND_URL } = process.env
 const URL_PARTIDO_TENIS_PADEL = `${REACT_APP_BACKEND_URL}/partidoTenisPadel`
 
-export const ObtenerPartidoTenisPadelActual = async (idTorneo: number): Promise<PartidoTenisPadel | null> => {
+export const ObtenerPartidosTenisPadelActuales = async (idTorneo: number): Promise<PartidoTenisPadel[] | null> => {
   try {
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}/${idTorneo}`)
-    const partidoActual = await res.json()
+    const partidosActuales = await res.json()
 
-    return partidoActual
+    return partidosActuales
   } catch (e) {
     console.log(`error: ${e}`)
     return null
@@ -18,16 +18,16 @@ export const ObtenerPartidoTenisPadelActual = async (idTorneo: number): Promise<
 export const ObtenerPartidosTenisPadelParaTorneo = async (idTorneo: number): Promise<PartidoTenisPadel[] | null> => {
   try {
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}/torneo/${idTorneo}`)
-    const partidoActual = await res.json()
+    const partidos = await res.json()
 
-    return partidoActual
+    return partidos
   } catch (e) {
     console.log(`error: ${e}`)
     return null
   }
 }
 
-export const ObtenerPartidoTenisPadelActualParaUsuario = async (token: string): Promise<PartidoTenisPadel | null> => {
+export const ObtenerPartidosTenisPadelActualesParaUsuario = async (token: string): Promise<PartidoTenisPadel[] | null> => {
   try {
     const opcionesRequest = {
       method: 'GET',
@@ -38,9 +38,9 @@ export const ObtenerPartidoTenisPadelActualParaUsuario = async (token: string): 
     }
 
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}`, opcionesRequest)
-    const partidoActual = await res.json()
+    const partidosActuales = await res.json()
 
-    return partidoActual
+    return partidosActuales
   } catch (e) {
     console.log(`error: ${e}`)
     return null
@@ -51,7 +51,7 @@ export const CrearPartidoTenisPadelActual = async (
   payload: PartidoTenisPadelPayload,
   token: string,
   limpiarAutenticacion: () => void,
-): Promise<PartidoTenisPadel | null> => {
+): Promise<PartidoTenisPadel[] | null> => {
   try {
     const opcionesRequest = {
       method: 'POST',
@@ -64,12 +64,11 @@ export const CrearPartidoTenisPadelActual = async (
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}`, opcionesRequest)
     if (res.status !== 200) {
       limpiarAutenticacion()
-      console.log(await res.text())
       return null
     }
-    const partidoActual = await res.json()
+    const partidosActuales = await res.json()
 
-    return partidoActual
+    return partidosActuales
   } catch (e) {
     console.log(`error: ${e}`)
     return null
@@ -80,7 +79,7 @@ export const ActualizarPartidoTenisPadelActual = async (
   payload: PartidoTenisPadelPayload,
   token: string,
   limpiarAutenticacion: () => void,
-): Promise<PartidoTenisPadel | null> => {
+): Promise<PartidoTenisPadel[] | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
@@ -93,12 +92,11 @@ export const ActualizarPartidoTenisPadelActual = async (
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}/${payload.id}`, opcionesRequest)
     if (res.status !== 200) {
       limpiarAutenticacion()
-      console.log(await res.text())
       return null
     }
-    const partidoActual = await res.json()
+    const partidosActuales = await res.json()
 
-    return partidoActual
+    return partidosActuales
   } catch (e) {
     console.log(`error: ${e}`)
     return null
@@ -109,7 +107,7 @@ export const ActualizarGame = async (
   payload: { id: number, suma: boolean, esEquipo1: boolean },
   token: string,
   limpiarAutenticacion: () => void,
-): Promise<PartidoTenisPadel | null> => {
+): Promise<PartidoTenisPadel[] | null> => {
   try {
     const opcionesRequest = {
       method: 'PUT',
@@ -122,12 +120,11 @@ export const ActualizarGame = async (
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}/game/${payload.id}`, opcionesRequest)
     if (res.status !== 200) {
       limpiarAutenticacion()
-      console.log(await res.text())
       return null
     }
-    const partidoActual = await res.json()
+    const partidosActuales = await res.json()
 
-    return partidoActual
+    return partidosActuales
   } catch (e) {
     console.log(`error: ${e}`)
     return null
@@ -138,7 +135,7 @@ export const BorrarPartidoTenisPadelActual = async (
   idPartidoTenisPadel: number,
   token: string,
   limpiarAutenticacion: () => void,
-): Promise<PartidoTenisPadel | null> => {
+): Promise<PartidoTenisPadel[] | null> => {
   try {
     if (!idPartidoTenisPadel) return null
 
@@ -152,10 +149,11 @@ export const BorrarPartidoTenisPadelActual = async (
     const res = await fetch(`${URL_PARTIDO_TENIS_PADEL}/${idPartidoTenisPadel}`, opcionesRequest)
     if (res.status !== 200) {
       limpiarAutenticacion()
-      console.log(await res.text())
+      return null
     }
+    const partidosActuales = await res.json()
 
-    return null
+    return partidosActuales
   } catch (e) {
     console.log(`error: ${e}`)
     return null

@@ -39,6 +39,10 @@ export interface PartidoTenisPadel {
   sacaEquipo1: boolean | null,
   tipoGame: 'game' | 'tie-break' | null,
   activo: boolean,
+  mostrarSet1?: boolean,
+  mostrarSet2?: boolean,
+  mostrarSet3?: boolean,
+  mostrarGame?: boolean,
 }
 
 export interface PartidoTenisPadelPayload {

@@ -1,51 +1,52 @@
 import { useState } from 'react'
 import { useEffect } from 'react'
 import styled from 'styled-components'
-import { ObtenerPartidoTenisPadelActual } from '../../Servicios/PartidoTenisPadel'
+import { ObtenerPartidosTenisPadelActuales } from '../../Servicios/PartidoTenisPadel'
 import { PartidoTenisPadel } from '../../Tipos'
 import Pelota from '../../Recursos/comunes/pelota'
 import { colorPrincipal, NoHayDatos } from '../../Estilos/Comunes'
 import { useContextoGlobal } from '../../Contexto/contextoGlobal'
 
 const Partido = () => {
-  const [partidoActual, setPartidoActual] = useState<PartidoTenisPadel | null>()
-  const [mostrarSet1, setMostrarSet1] = useState<boolean>(true)
-  const [mostrarSet2, setMostrarSet2] = useState<boolean>(false)
-  const [mostrarSet3, setMostrarSet3] = useState<boolean>(false)
-  const [mostrarGame, setMostrarGame] = useState<boolean>(false)
+  const [partidosActuales, setPartidosActuales] = useState<PartidoTenisPadel[] | null>()
   const [cargando, setCargando] = useState<boolean>(true)
 
   const { torneoSeleccionado } = useContextoGlobal()
 
   useEffect(() => {
-    setPartidoActual(null)
+    setPartidosActuales(null)
     setCargando(true)
 
     const obtenerPartidoActual = async () => {
       if (!torneoSeleccionado?.id) return
-      const partidoActualDB = await ObtenerPartidoTenisPadelActual(torneoSeleccionado.id)
-      if (partidoActualDB) {
-        setPartidoActual({
-          ...partidoActualDB,
-          equipo1Game: partidoActualDB.equipo1Game ?? 0,
-          equipo2Game: partidoActualDB.equipo2Game ?? 0,
-          equipo1Set1: partidoActualDB.equipo1Set1 ?? 0,
-          equipo1Set2: partidoActualDB.equipo1Set2 ?? 0,
-          equipo1Set3: partidoActualDB.equipo1Set3 ?? 0,
-          equipo2Set1: partidoActualDB.equipo2Set1 ?? 0,
-          equipo2Set2: partidoActualDB.equipo2Set2 ?? 0,
-          equipo2Set3: partidoActualDB.equipo2Set3 ?? 0,
-          setActual: partidoActualDB.setActual ?? 1,
-          tipoSet: partidoActualDB.tipoSet ?? 'set',
-          sacaEquipo1: partidoActualDB.sacaEquipo1 ?? true,
-          tipoGame: partidoActualDB.tipoGame ?? 'game',
-        })
-        setMostrarSet1(!partidoActualDB?.setActual || partidoActualDB.setActual >= 1)
-        setMostrarSet2(!!partidoActualDB?.setActual && partidoActualDB.setActual >= 2)
-        setMostrarSet3(!!partidoActualDB?.setActual && partidoActualDB.setActual >= 3)
-        setMostrarGame(!partidoActualDB?.tipoSet || partidoActualDB.tipoSet === 'set')
+      const partidosActualesDB = await ObtenerPartidosTenisPadelActuales(torneoSeleccionado.id)
+      if (partidosActualesDB?.length) {
+        const partidosActuales = partidosActualesDB.map(
+          partidoActualBD => (
+            {
+              ...partidoActualBD,
+              equipo1Game: partidoActualBD.equipo1Game ?? 0,
+              equipo2Game: partidoActualBD.equipo2Game ?? 0,
+              equipo1Set1: partidoActualBD.equipo1Set1 ?? 0,
+              equipo1Set2: partidoActualBD.equipo1Set2 ?? 0,
+              equipo1Set3: partidoActualBD.equipo1Set3 ?? 0,
+              equipo2Set1: partidoActualBD.equipo2Set1 ?? 0,
+              equipo2Set2: partidoActualBD.equipo2Set2 ?? 0,
+              equipo2Set3: partidoActualBD.equipo2Set3 ?? 0,
+              setActual: partidoActualBD.setActual ?? 1,
+              tipoSet: partidoActualBD.tipoSet ?? 'set',
+              sacaEquipo1: partidoActualBD.sacaEquipo1 ?? true,
+              tipoGame: partidoActualBD.tipoGame ?? 'game',
+              mostrarSet1: !partidoActualBD?.setActual || partidoActualBD.setActual >= 1,
+              mostrarSet2: !!partidoActualBD?.setActual && partidoActualBD.setActual >= 2,
+              mostrarSet3: !!partidoActualBD?.setActual && partidoActualBD.setActual >= 3,
+              mostrarGame: !partidoActualBD?.tipoSet || partidoActualBD.tipoSet === 'set',
+            }
+          )
+        )
+        setPartidosActuales(partidosActuales)
       } else {
-        setPartidoActual(null)
+        setPartidosActuales(null)
       }
       setCargando(false)
     }
@@ -61,56 +62,62 @@ const Partido = () => {
 
   if (cargando) return <NoHayDatos>Cargando...</NoHayDatos>
   if (!torneoSeleccionado?.activo) return <NoHayDatos>Este torneo ha finalizado.</NoHayDatos>
-  if (!partidoActual) return <NoHayDatos>No hay partido en curso.</NoHayDatos>
+  if (!partidosActuales?.length) return <NoHayDatos>No hay partidos en curso.</NoHayDatos>
 
   return (
     <Tablero>
-      <Fila>
-        <Equipo>
-          <Jugadores>
-            <Jugador>{partidoActual?.equipo1?.nombreJugador1 || 'Jugador/a 1'}</Jugador>
-            <Jugador>{partidoActual?.equipo1?.nombreJugador2 || 'Jugador/a 2'}</Jugador>
-          </Jugadores>
-          { !!partidoActual.sacaEquipo1 && <PelotaConEstilo /> }
-        </Equipo>
-        { mostrarSet1 && <Set>{partidoActual.equipo1Set1 || 0}</Set> }
-        { mostrarSet2 && <Set>{partidoActual.equipo1Set2 || 0}</Set> }
-        { mostrarSet3 && <Set>{partidoActual.equipo1Set3 || 0}</Set> }
-        { mostrarGame &&
-          <Game>
-            {
-              partidoActual?.equipo1Game
-              ? partidoActual.equipo1Game === 50
-                ? 'V'
-                : partidoActual.equipo1Game
-              : 0
-            }
-          </Game>
-        }
-      </Fila>
-      <Fila>
-        <Equipo>
-          <Jugadores>
-            <Jugador>{partidoActual?.equipo2?.nombreJugador1 || 'Jugador/a 1'}</Jugador>
-            <Jugador>{partidoActual?.equipo2?.nombreJugador2 || 'Jugador/a 2'}</Jugador>
-          </Jugadores>
-          { !partidoActual.sacaEquipo1 && <PelotaConEstilo /> }
-        </Equipo>
-        { mostrarSet1 && <Set>{partidoActual.equipo2Set1 || 0}</Set> }
-        { mostrarSet2 && <Set>{partidoActual.equipo2Set2 || 0}</Set> }
-        { mostrarSet3 && <Set>{partidoActual.equipo2Set3 || 0}</Set> }
-        { mostrarGame &&
-          <Game>
-          {
-            partidoActual?.equipo2Game
-            ? partidoActual.equipo2Game === 50
-              ? 'V'
-              : partidoActual.equipo2Game
-            : 0
-          }
-        </Game>
-        }
-      </Fila>
+      {
+        partidosActuales.map(partidoActual => (
+          <BloquePartido key={partidoActual.id}>
+            <Fila>
+              <Equipo>
+                <Jugadores>
+                  <Jugador>{partidoActual?.equipo1?.nombreJugador1 || 'Jugador/a 1'}</Jugador>
+                  <Jugador>{partidoActual?.equipo1?.nombreJugador2 || 'Jugador/a 2'}</Jugador>
+                </Jugadores>
+                { !!partidoActual.sacaEquipo1 && <PelotaConEstilo /> }
+              </Equipo>
+              { partidoActual.mostrarSet1 && <Set>{partidoActual.equipo1Set1 || 0}</Set> }
+              { partidoActual.mostrarSet2 && <Set>{partidoActual.equipo1Set2 || 0}</Set> }
+              {partidoActual. mostrarSet3 && <Set>{partidoActual.equipo1Set3 || 0}</Set> }
+              { partidoActual.mostrarGame &&
+                <Game>
+                  {
+                    partidoActual?.equipo1Game
+                    ? partidoActual.equipo1Game === 50
+                      ? 'V'
+                      : partidoActual.equipo1Game
+                    : 0
+                  }
+                </Game>
+              }
+            </Fila>
+            <Fila>
+              <Equipo>
+                <Jugadores>
+                  <Jugador>{partidoActual?.equipo2?.nombreJugador1 || 'Jugador/a 1'}</Jugador>
+                  <Jugador>{partidoActual?.equipo2?.nombreJugador2 || 'Jugador/a 2'}</Jugador>
+                </Jugadores>
+                { !partidoActual.sacaEquipo1 && <PelotaConEstilo /> }
+              </Equipo>
+              { partidoActual.mostrarSet1 && <Set>{partidoActual.equipo2Set1 || 0}</Set> }
+              { partidoActual.mostrarSet2 && <Set>{partidoActual.equipo2Set2 || 0}</Set> }
+              { partidoActual.mostrarSet3 && <Set>{partidoActual.equipo2Set3 || 0}</Set> }
+              { partidoActual.mostrarGame &&
+                <Game>
+                {
+                  partidoActual?.equipo2Game
+                  ? partidoActual.equipo2Game === 50
+                    ? 'V'
+                    : partidoActual.equipo2Game
+                  : 0
+                }
+              </Game>
+              }
+            </Fila>
+          </BloquePartido>
+        ))
+      }
     </Tablero>
   )
 }
@@ -120,32 +127,43 @@ const Tablero = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  margin: 100px 0;
+  margin: 60px 0;
 
   @media (max-width: 768px) {
-    margin: 50px 0;
+    margin: 40px 0;
   }
 
   @media (max-width: 600px) {
-    margin: 40px 0;
+    margin: 30px 0;
   }
 `
 
 const Fila = styled.div`
   display: flex;
   height: 170px;
-  width: 80%;
 
   @media (max-width: 768px) {
     height: 100px;
-    width: 85%;
   }
 
   @media (max-width: 600px) {
     height: 70px;
+  }
+`
+
+const BloquePartido = styled.div`
+  margin-bottom: 1.5%;
+  width: 80%;
+
+  @media (max-width: 768px) {
+    width: 85%;
+  }
+
+  @media (max-width: 600px) {
     width: 95%;
   }
 `
+
 const Equipo = styled.div`
   display: flex;
   justify-content: space-between;

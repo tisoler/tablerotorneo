@@ -122,7 +122,7 @@ const Grupos = () => {
 
 const Tablero = styled.div`
   display: flex;
-  justify-content: space-between;
+  justify-content: space-around;
   width: calc(100% - 40px);
   margin: 60px 0;
   padding: 0 20px;

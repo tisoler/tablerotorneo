@@ -7,6 +7,7 @@ const Rutas = () => {
   return (
     <Routes>
       <Route path={'/'} element={<Inicio />} />
+      <Route path={'/:idDisciplinaClub'} element={<Inicio />} />
       <Route path={'/tablero'} element={<Tablero />} />
       <Route path={'/tableroComandos'} element={<TableroComandosContenedor />} />
       <Route path={'/pantallaInicio'} element={<Inicio />} />
