@@ -33,7 +33,7 @@ import {
   CrearPartidoTenisPadelActual,
   ObtenerPartidosTenisPadelActualesParaUsuario
 } from '../../Servicios/PartidoTenisPadel'
-import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoTenisPadel, PartidoTenisPadelPayload } from '../../Tipos'
+import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PANTALLA_MOSTRAR, PantallaMostrar, PartidoTenisPadel, PartidoTenisPadelPayload } from '../../Tipos'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoTenisPadel = {
   id: -1,
@@ -298,9 +298,9 @@ const TableroComandos = () => {
         <ContenedorBotonesPantallas>
           <Boton
             ancho={150} 
-            onClick={() => actualizarConfiguracion('grupo')}>Grupos</Boton>
-          <Boton ancho={200} onClick={() => actualizarConfiguracion('partido')}>Partido</Boton>
-          <Boton ancho={200} onClick={() => actualizarConfiguracion('cuadro')}>Cuadro</Boton>
+            onClick={() => actualizarConfiguracion(PANTALLA_MOSTRAR.grupo)}>Grupos</Boton>
+          <Boton ancho={200} onClick={() => actualizarConfiguracion(PANTALLA_MOSTRAR.partido)}>Partido</Boton>
+          <Boton ancho={200} onClick={() => actualizarConfiguracion(PANTALLA_MOSTRAR.cuadro)}>Cuadro</Boton>
         </ContenedorBotonesPantallas>
         <BotonCerrarSesion ancho={200} onClick={() => limpiarAutenticacion()}>Cerrar sesión</BotonCerrarSesion>
       </TableroPantallas>

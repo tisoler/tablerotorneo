@@ -1,5 +1,5 @@
 import { useState, createContext, useContext } from "react"
-import { DisciplinaClub, Torneo } from "../Tipos"
+import { Categoria, DisciplinaClub, Torneo } from "../Tipos"
 
 interface ContextoGlobalProp {
   token: string,
@@ -7,11 +7,15 @@ interface ContextoGlobalProp {
   disciplinaClub: DisciplinaClub | null,
   torneos: Torneo[] | null,
   torneoSeleccionado: Torneo | null,
+  categorias: Categoria[] | null,
+  categoriaSeleccionada: Categoria | null,
   guardarAutenticacion: (token: string, idDisciplina: number) => void,
   limpiarAutenticacion: () => void,
   setDisciplinaClub: (id: DisciplinaClub | null) => void,
   setTorneos: (torneos: Torneo[]) => void,
   setTorneoSeleccionado: (torneos: Torneo | null) => void,
+  setCategorias: (categorias: Categoria[]) => void,
+  setCategoriaSeleccionada: (categoria: Categoria | null) => void,
 }
 
 const ContextoGlobal = createContext<ContextoGlobalProp>({
@@ -20,11 +24,15 @@ const ContextoGlobal = createContext<ContextoGlobalProp>({
   disciplinaClub: null,
   torneos: [],
   torneoSeleccionado: null,
+  categorias: [],
+  categoriaSeleccionada: null,
   guardarAutenticacion: (token: string, idDisciplina: number) => {},
   limpiarAutenticacion: () => {},
   setDisciplinaClub: (id: DisciplinaClub | null) => {},
   setTorneos: (torneos: Torneo[]) => {},
   setTorneoSeleccionado: (torneos: Torneo | null) => {},
+  setCategorias: (categorias: Categoria[]) => {},
+  setCategoriaSeleccionada: (categoria: Categoria | null) => {},
 })
 
 export const useContextoGlobal = () => (useContext(ContextoGlobal))
@@ -60,6 +68,8 @@ export const ProveedorGlobal = (props: { children: React.ReactNode }) => {
   const [disciplinaClub, setDisciplinaClub] = useState<DisciplinaClub | null>(null)
   const [torneos, setTorneos] = useState<Torneo[]>([])
   const [torneoSeleccionado, setTorneoSeleccionado] = useState<Torneo | null>(null)
+  const [categorias, setCategorias] = useState<Categoria[]>([])
+  const [categoriaSeleccionada, setCategoriaSeleccionada] = useState<Categoria | null>(null)
 
   const guardarAutenticacion = (token: string, idDisciplina: number) => {
     setToken(token)
@@ -85,11 +95,15 @@ export const ProveedorGlobal = (props: { children: React.ReactNode }) => {
         disciplinaClub,
         torneos,
         torneoSeleccionado,
+        categorias,
+        categoriaSeleccionada,
         guardarAutenticacion,
         limpiarAutenticacion,
         setDisciplinaClub,
         setTorneos,
         setTorneoSeleccionado,
+        setCategorias,
+        setCategoriaSeleccionada
       }}
     >
       { props.children }

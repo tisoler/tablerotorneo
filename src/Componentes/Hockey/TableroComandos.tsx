@@ -34,7 +34,7 @@ import { ActualizarConfiguracion } from '../../Servicios/Configuracion'
 import { ActualizarCuadroFinalParaUsuarioLogueado, ObtenerCuadroFinalParaUsuarioLogueado } from '../../Servicios/CuadroFinal'
 import { ActualizarEquipo, ObtenerEquiposParaUsuarioLogueado } from '../../Servicios/Equipo'
 import { CrearPartidoHockeyActual, ActualizarPartidoHockeyActual, BorrarPartidoHockeyActual, ObtenerPartidoHockeyActualParaUsuario } from '../../Servicios/PartidoHockey'
-import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PantallaMostrar, PartidoHockey, PartidoHockeyPayload } from '../../Tipos'
+import { CuadroFinal, CuadroFinalPayload, Equipo, EquipoPayload, PANTALLA_MOSTRAR, PantallaMostrar, PartidoHockey, PartidoHockeyPayload } from '../../Tipos'
 
 const PARTIDO_ACTUAL_INICIAL: PartidoHockey = {
   id: -1,
@@ -195,8 +195,8 @@ const TableroComandos = () => {
         <ContenedorBotonesPantallas>
           <Boton
             ancho={150} 
-            onClick={() => actualizarConfiguracion('torneo')}>Torneo</Boton>
-          <Boton ancho={200} onClick={() => actualizarConfiguracion('partido')}>Partido</Boton>
+            onClick={() => actualizarConfiguracion(PANTALLA_MOSTRAR.torneo)}>Torneo</Boton>
+          <Boton ancho={200} onClick={() => actualizarConfiguracion(PANTALLA_MOSTRAR.partido)}>Partido</Boton>
           <BotonCerrarSesion ancho={200} onClick={() => limpiarAutenticacion()}>Cerrar sesión</BotonCerrarSesion>
         </ContenedorBotonesPantallas>
       </TableroPantallas>

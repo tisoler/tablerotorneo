@@ -3,7 +3,7 @@ import Partido from "./Partido"
 import Torneo from './Torneo'
 import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
 import BotonVolver from "../Comunes/BotonVolver"
-import { PantallaMostrar } from "../../Tipos"
+import { PANTALLA_MOSTRAR, PantallaMostrar } from "../../Tipos"
 import { BotonMenu, BotonMenuDerecha, BotonMenuIzquierda, ContenedorTableroUsuario, EncabezadoPantalla, Menu } from "../../Estilos/Comunes"
 import Cuadro from "./Cuadro"
 import { useContextoGlobal } from "../../Contexto/contextoGlobal"
@@ -21,16 +21,16 @@ const TableroUsuario = ({ onVolver }: TableroUsuarioProps) => {
     const obtenerConfiguracion = async () => {
       if (!disciplinaClub) return
       const configuracionInicial = await ObtenerConfiguracion(disciplinaClub.id)
-      setVista(configuracionInicial?.pantallaMostrar ?? 'torneo')
+      setVista(configuracionInicial?.pantallaMostrar ?? PANTALLA_MOSTRAR.torneo)
     }
     obtenerConfiguracion()
   }, [disciplinaClub])
 
   const renderPantalla = () => {
     switch(vista) {
-      case 'partido':
+      case PANTALLA_MOSTRAR.partido:
         return <Partido />
-      case 'cuadro':
+      case PANTALLA_MOSTRAR.cuadro:
         return <Cuadro />
       default:
         return <Torneo />
@@ -42,9 +42,9 @@ const TableroUsuario = ({ onVolver }: TableroUsuarioProps) => {
       <EncabezadoPantalla>
         <BotonVolver onVolver={onVolver} />
         <Menu>
-          <BotonMenuIzquierda seleccionado={vista === 'partido'} onClick={() => setVista('partido')}>Partido en curso</BotonMenuIzquierda>
-          <BotonMenu seleccionado={vista === 'torneo'}  onClick={() => setVista('torneo')}>Torneo</BotonMenu>
-          <BotonMenuDerecha seleccionado={vista === 'cuadro'}  onClick={() => setVista('cuadro')}>Cuadro</BotonMenuDerecha>
+          <BotonMenuIzquierda seleccionado={vista === PANTALLA_MOSTRAR.partido} onClick={() => setVista(PANTALLA_MOSTRAR.partido)}>Partido en curso</BotonMenuIzquierda>
+          <BotonMenu seleccionado={vista === PANTALLA_MOSTRAR.torneo}  onClick={() => setVista(PANTALLA_MOSTRAR.torneo)}>Torneo</BotonMenu>
+          <BotonMenuDerecha seleccionado={vista === PANTALLA_MOSTRAR.cuadro}  onClick={() => setVista(PANTALLA_MOSTRAR.cuadro)}>Cuadro</BotonMenuDerecha>
         </Menu>
       </EncabezadoPantalla>
       { vista && renderPantalla() }

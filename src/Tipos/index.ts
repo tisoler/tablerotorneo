@@ -126,7 +126,21 @@ export interface PartidoHockeyPayload {
   activo?: number | null,
 }
 
-export type PantallaMostrar = 'grupo' | 'partido' | 'partidosJugados' | 'cuadro' | 'torneo'
+
+export enum PANTALLA_MOSTRAR {
+  grupo = 'grupo',
+  partido = 'partido',
+  partidosJugados = 'partidosJugados',
+  cuadro = 'cuadro',
+  torneo = 'torneo',
+  ranking = 'ranking'
+}
+export type PantallaMostrar = PANTALLA_MOSTRAR.grupo
+  | PANTALLA_MOSTRAR.partido
+  | PANTALLA_MOSTRAR.partidosJugados
+  | PANTALLA_MOSTRAR.cuadro
+  | PANTALLA_MOSTRAR.torneo
+  | PANTALLA_MOSTRAR.ranking
 
 export interface Configuracion {
   pantallaMostrar: PantallaMostrar,
@@ -191,4 +205,21 @@ export interface Torneo {
   imagenEscudo?: string,
   colorFondoSponsor?: string,
   activo?: boolean,
+}
+
+export interface Categoria {
+  id?: number,
+  descripcion: string,
+}
+
+export interface Jugador {
+  id?: number,
+  nombre: string,
+  apellido: string,
+  idDisciplinaClub: number,
+  idCategoria: number,
+  ranking: number,
+  puntos: number,
+  foto: string,
+  localidad: string,
 }

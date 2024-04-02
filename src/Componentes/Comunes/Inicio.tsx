@@ -11,11 +11,20 @@ import { ObtenerTorneoActual, ObtenerTorneos } from "../../Servicios/Torneo"
 import { NoHayDatos } from "../../Estilos/Comunes"
 import { useContextoGlobal } from "../../Contexto/contextoGlobal"
 import { useParams } from "react-router-dom"
+import { ObtenerCategorias } from "../../Servicios/Categoria"
 
 const MenuInicio = () => {
   const [disciplinasClubes, setDisciplinasClubes] = useState<DisciplinaClub[]>()
 
-  const { setDisciplinaClub, disciplinaClub, setTorneos, setTorneoSeleccionado, torneoSeleccionado } = useContextoGlobal()
+  const {
+    setDisciplinaClub,
+    disciplinaClub,
+    setTorneos,
+    setTorneoSeleccionado,
+    torneoSeleccionado,
+    setCategorias,
+    setCategoriaSeleccionada
+  } = useContextoGlobal()
   const parammetros = useParams()
 
   useEffect(() => {
@@ -47,8 +56,17 @@ const MenuInicio = () => {
       if (torneosBD) setTorneos(torneosBD)
     }
 
+    const obtenerDatosCategorias = async () => {
+      if (!disciplinaClub?.id) return null
+      const categoriasBD = await ObtenerCategorias(disciplinaClub.id)
+      if (!categoriasBD?.length) return 
+      setCategorias(categoriasBD)
+      setCategoriaSeleccionada(categoriasBD[0])
+    }
+
     obtenerDatosTorneoActual()
     obtenerDatosTorneos()
+    obtenerDatosCategorias()
   }, [disciplinaClub, parammetros])
 
   let Encabezado = <EncabezadoGeneral />

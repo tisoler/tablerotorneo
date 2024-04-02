@@ -1,14 +1,15 @@
 import { useEffect, useState } from "react"
 import { ObtenerConfiguracion } from "../../Servicios/Configuracion"
-import { Configuracion } from "../../Tipos"
+import { Configuracion, PANTALLA_MOSTRAR } from "../../Tipos"
 import Grupos from "./Grupos"
 import Partido from "./Partido"
 import Cuadro from './Cuadro'
 import EncabezadoPersonalizado from "../Comunes/EncabezadoPersonalizado"
 import PartidosJugados from "./PartidosJugados"
+import Ranking from "./Ranking"
 
 const CONFIGURACION_INICIAL: Configuracion = {
-  pantallaMostrar: 'grupo',
+  pantallaMostrar: PANTALLA_MOSTRAR.grupo,
 }
 
 const Tablero = () => {
@@ -29,12 +30,14 @@ const Tablero = () => {
 
   const renderPantalla = () => {
     switch(configuracion?.pantallaMostrar) {
-      case 'partido':
+      case PANTALLA_MOSTRAR.partido:
         return <Partido /> // HACER: Agregar login para setear disciplinaClub
-      case 'partidosJugados':
+      case PANTALLA_MOSTRAR.partidosJugados:
         return <PartidosJugados />
-      case 'cuadro':
+      case PANTALLA_MOSTRAR.cuadro:
         return <Cuadro />
+      case PANTALLA_MOSTRAR.ranking:
+        return <Ranking />
       default:
         return <Grupos />
     }
