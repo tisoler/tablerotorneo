@@ -23,6 +23,7 @@ const Boton = styled.div`
   border-radius: 50%;
   cursor: pointer;
   line-height: 70px;
+  z-index: 999;
 
   & svg {
     fill: #2E86C1;

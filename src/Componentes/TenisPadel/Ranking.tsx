@@ -43,7 +43,7 @@ const Ranking = () => {
             <ImagenJugador src={require(`../../Recursos/jugadores/${jugador.foto || 'jugador.png'}`)} />
             <NumeroRanking numero={jugador.ranking}>{jugador.ranking}</NumeroRanking>
             <Datos>
-              <div style={{ width: '44%' }}>
+              <div style={{ width: '46%' }}>
                 <Localidad>{jugador.localidad ?? '-'}</Localidad>
                 <ContenedorPuntos>
                   <TituloPuntos>Pts:</TituloPuntos>
@@ -145,16 +145,21 @@ const ImagenJugador = styled.img`
 const NumeroRanking = styled.div<{ numero: number }>`
   font-weight: bold;
   font-family: Tahoma;
-  font-size: ${props => props.numero > 9 ? '170' : '205'}px;
+  font-size: ${props => props.numero > 9 ? '165' : '200'}px;
   line-height: 205px;
-  width: ${props => props.numero > 9 ? 'calc(100% - 20px)' : 'calc(100% - 35px)'};
+  width: ${props => props.numero > 9 ? 'calc(100% - 20px)' : 'calc(100% - 25px)'};
   text-align: right;
   -webkit-text-stroke: 2px #ffffff;
-  padding-right: ${props => props.numero > 9 ? '20' : '35'}px;
-  padding-top: 10px;
+  padding-right: ${props => props.numero > 9 ? '20' : '25'}px;
+  padding-top: ${props => props.numero > 9 ? '0' : '15'}px;
   z-index: 99;
   letter-spacing: -12px;
   transform: scale(1, 1.3);
+
+  @media (max-width: 768px) {
+    font-size: ${props => props.numero > 9 ? '145' : '185'}px;
+    letter-spacing: -17px;
+  }
 `
 
 const Datos = styled.div`
@@ -205,7 +210,7 @@ const Puntos = styled.div`
 const ContenedorNombre = styled.div`
   display: flex;
   flex-direction: column;
-  width: 55%;
+  width: 53%;
   display: flex;
   flexDirection: column;
   padding-left: 12px;
@@ -224,10 +229,6 @@ const Nombre = styled.div`
 
   @media (max-width: 768px) {
     transform: scale(1.3, 1) translateX(17px);
-  }
-
-  @media (max-width: 600px) {
-    transform: scale(1.3, 1) translateX(25px);
   }
 `
 const Apellido = styled.div`
